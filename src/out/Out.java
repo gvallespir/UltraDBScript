@@ -21,7 +21,16 @@ public class Out extends OutBase{
         E_RECOVERABLE_ERROR,
         E_WARNING,
         E_STRICT,
-        E_NOTICE
+        E_NOTICE,
+        E_CORE_ERROR,
+        E_CORE_WARNING,
+        E_COMPILE_ERROR,
+        E_COMPILE_WARNING,
+        E_USER_ERROR,
+        E_USER_WARNING,
+        E_USER_NOTICE,
+        E_DEPRECATED,
+        E_USER_DEPRECATED
     }
     
     public Out(Config config) {
@@ -32,6 +41,13 @@ public class Out extends OutBase{
         if(tab)
             System.out.print("\t");
         System.out.println(text);
+    }
+    
+    public void Write(Type type, String file, String nodo, String text){
+        if((nodo != null) && (nodo.compareTo("") != 0))
+            System.out.print("\t");
+        
+        
     }
     
     public void Write(Type type, String text, boolean tab){

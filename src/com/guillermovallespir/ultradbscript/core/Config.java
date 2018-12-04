@@ -85,12 +85,63 @@ public class Config {
     private final static String MATCHES_FALSE = "[Oo]ff|[Ff]alse|[Nn]o|0";
     private final static String ROOT = "ULTRA_DBSCRIPT";
     
+    private String evalString(String value){
+        if(value.matches(MATCHES_NONE))
+            return "";
+        return value;
+    }
+    
+    private int evalInt(String value){
+        if(value.matches(MATCHES_NONE))
+            return 0;
+        return Integer.valueOf(value);
+    }
+    
+    private Object eval(Object value){
+        if(value instanceof String){
+            if(((String) value).matches(MATCHES_NONE))
+                return "";
+            if(((String) value).matches(MATCHES_TRUE))
+                return true;
+            if(((String) value).matches(MATCHES_FALSE))
+                return false;
+            try{
+                return Integer.valueOf((String) value);
+            }catch(Exception e){
+                
+            }
+            return (String) value;
+        }
+        
+        if(value instanceof Boolean){
+            return (boolean) value;
+        }
+        
+        if(value instanceof Integer){
+            return (int) value;
+        }
+        
+        return value;
+    }
+    
+    private boolean evalBool(String value){
+        return value.matches(MATCHES_TRUE);
+    }
+    
     public String get_user_ini_filename(){
         return user_ini_filename;
     }
     
+    public void set_user_ini_filename(String value){
+        user_ini_filename = value;
+    }
+    
     public int get_user_ini_cachettl(){
         return user_ini_cachettl;
+    }
+    
+    public void set_user_ini_cachettl(String value){
+        user_ini_cachettl = (int) this.eval(value);
     }
     
     public boolean get_engine(){
@@ -135,6 +186,18 @@ public class Config {
     
     public boolean get_expose_ultradbscript(){
         return expose_ultradbscript;
+    }
+    
+    public int get_max_execution_time(){
+        return max_execution_time;
+    }
+    
+    public int get_max_input_time(){
+        return max_input_time;
+    }
+    
+    public int get_max_params(){
+        return max_params;
     }
     
     public Config(String[] args){
