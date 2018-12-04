@@ -15,9 +15,11 @@ import com.guillermovallespir.ultradbscript.core.Config;
 public class OutBase {
     protected boolean terminal_color = true;
     protected boolean terminal_tables = true;
+    protected boolean terminal_pauses = false;
     
     public OutBase(Config config){
         terminal_color = config.getINIBoolean("Terminal", "terminal.color", terminal_color, true);
         terminal_tables = config.getINIBoolean("Terminal", "terminal.tables", terminal_tables, true);
+        terminal_pauses = config.getINIBoolean("Terminal", "terminal.pauses", terminal_pauses, true);
     }
 }
