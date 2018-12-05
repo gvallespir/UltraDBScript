@@ -5,6 +5,7 @@
  */
 package com.guillermovallespir.ultradbscript;
 
+import com.guillermovallespir.ultradbscript.core.CommandLineParser;
 import com.guillermovallespir.ultradbscript.core.Config;
 import java.util.Calendar;
 import out.Out;
@@ -19,8 +20,16 @@ public class UltraDBScript {
         // Se le asigna la máxima prioridad de ejecución
         Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
         
+        
+        // Se crea la sentencia para el parse de línea de comando
+        CommandLineParser clp = new CommandLineParser(args);
+        
+        
+        
         // Se carga la configuración
-        Config config = new Config(args);
+        Config config = new Config(clp.getConfigs());
+        
+        
         
         Out out = new Out(config);
         out.Write("******************************", true);

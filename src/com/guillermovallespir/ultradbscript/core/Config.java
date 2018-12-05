@@ -9,6 +9,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.ini4j.Wini;
 
 /**
@@ -84,6 +86,8 @@ public class Config {
     private final static String MATCHES_TRUE = "[Oo]n|[Tt]rue|[Yy]es|1";
     private final static String MATCHES_FALSE = "[Oo]ff|[Ff]alse|[Nn]o|0";
     private final static String ROOT = "ULTRA_DBSCRIPT";
+    
+    private String ARGS;
     
     private String evalString(String value){
         if(value.matches(MATCHES_NONE))
@@ -229,89 +233,93 @@ public class Config {
         try {
             CONFIG = new Wini(f);
             
+            // Se concatenan los argumentos
+            StringBuilder builder = new StringBuilder();
+            for(String s : args) {
+                builder.append(s);
+            }
+            ARGS = builder.toString();
+            
             // Se parsea el archivo INI
-            user_ini_filename = this.getINIString(CONFIG, ROOT, "user_ini.filename", user_ini_filename, true);
-            user_ini_cachettl = this.getINIInt(CONFIG, ROOT, "user_ini.cachettl", user_ini_cachettl, true);
+            user_ini_filename = this.getINIString(ROOT, "user_ini.filename", user_ini_filename, true);
+            user_ini_cachettl = this.getINIInt(ROOT, "user_ini.cachettl", user_ini_cachettl, true);
             
-            engine = this.getINIBoolean(CONFIG, ROOT, "engine", engine, true);
-            short_open_tag = this.getINIBoolean(CONFIG, ROOT, "short_open_tag", short_open_tag, true);
-            precision = this.getINIInt(CONFIG, ROOT, "precision", precision, true);
-            output_buffering = this.getINIInt(CONFIG, ROOT, "output_buffering", output_buffering, true);
-            output_handler = this.getINIString(CONFIG, ROOT, "output_handler", output_handler, true);
-            open_basedir = this.getINIString(CONFIG, ROOT, "open_basedir", open_basedir, true);
-            disable_functions = this.getINIString(CONFIG, ROOT, "disable_functions", disable_functions, true);
-            disable_classes = this.getINIString(CONFIG, ROOT, "disable_classes", disable_classes, true);
+            engine = this.getINIBoolean(ROOT, "engine", engine, true);
+            short_open_tag = this.getINIBoolean(ROOT, "short_open_tag", short_open_tag, true);
+            precision = this.getINIInt(ROOT, "precision", precision, true);
+            output_buffering = this.getINIInt(ROOT, "output_buffering", output_buffering, true);
+            output_handler = this.getINIString(ROOT, "output_handler", output_handler, true);
+            open_basedir = this.getINIString(ROOT, "open_basedir", open_basedir, true);
+            disable_functions = this.getINIString(ROOT, "disable_functions", disable_functions, true);
+            disable_classes = this.getINIString(ROOT, "disable_classes", disable_classes, true);
             
-            expose_ultradbscript = this.getINIBoolean(CONFIG, ROOT, "expose_ultradbscript", expose_ultradbscript, true);
+            expose_ultradbscript = this.getINIBoolean(ROOT, "expose_ultradbscript", expose_ultradbscript, true);
             
-            max_execution_time = this.getINIInt(CONFIG, ROOT, "max_execution_time", max_execution_time, true);
-            max_input_time = this.getINIInt(CONFIG, ROOT, "max_input_time", max_input_time, true);
-            max_params = this.getINIInt(CONFIG, ROOT, "max_params", max_params, true);
-            memory_limit = this.getINIString(CONFIG, ROOT, "memory_limit", memory_limit, true);
+            max_execution_time = this.getINIInt(ROOT, "max_execution_time", max_execution_time, true);
+            max_input_time = this.getINIInt(ROOT, "max_input_time", max_input_time, true);
+            max_params = this.getINIInt(ROOT, "max_params", max_params, true);
+            memory_limit = this.getINIString(ROOT, "memory_limit", memory_limit, true);
             
-            error_reporting = this.getINIString(CONFIG, ROOT, "error_reporting", error_reporting, true);
-            display_errors = this.getINIBoolean(CONFIG, ROOT, "display_errors", display_errors, true);
-            display_startup_errors = this.getINIBoolean(CONFIG, ROOT, "display_startup_errors", display_startup_errors, true);
-            log_errors = this.getINIBoolean(CONFIG, ROOT, "log_errors", log_errors, true);
-            log_errors_max_len = this.getINIInt(CONFIG, ROOT, "log_errors_max_len", log_errors_max_len, true);
-            ignore_repeated_errors = this.getINIBoolean(CONFIG, ROOT, "ignore_repeated_errors", ignore_repeated_errors, true);
-            ignore_repeated_source = this.getINIBoolean(CONFIG, ROOT, "ignore_repeated_source", ignore_repeated_source, true);
-            report_memleaks = this.getINIBoolean(CONFIG, ROOT, "report_memleaks", report_memleaks, true);
-            track_error = this.getINIBoolean(CONFIG, ROOT, "track_error", track_error, true);
-            xmlrpc_errors = this.getINIBoolean(CONFIG, ROOT, "xmlrpc_errors", xmlrpc_errors, true);
-            xmlrpc_error_number = this.getINIInt(CONFIG, ROOT, "xmlrpc_error_number", xmlrpc_error_number, true);
-            html_errors = this.getINIBoolean(CONFIG, ROOT, "html_errors", html_errors, true);
-            docref_root = this.getINIString(CONFIG, ROOT, "docref_root", docref_root, true);
-            docref_ext = this.getINIString(CONFIG, ROOT, "docref_ext", docref_ext, true);
-            error_prepend_string = this.getINIString(CONFIG, ROOT, "error_prepend_string", error_prepend_string, true);
-            error_append_string = this.getINIString(CONFIG, ROOT, "error_append_string", error_append_string, true);
-            error_log = this.getINIString(CONFIG, ROOT, "error_log", error_log, true);
+            error_reporting = this.getINIString(ROOT, "error_reporting", error_reporting, true);
+            display_errors = this.getINIBoolean(ROOT, "display_errors", display_errors, true);
+            display_startup_errors = this.getINIBoolean(ROOT, "display_startup_errors", display_startup_errors, true);
+            log_errors = this.getINIBoolean(ROOT, "log_errors", log_errors, true);
+            log_errors_max_len = this.getINIInt(ROOT, "log_errors_max_len", log_errors_max_len, true);
+            ignore_repeated_errors = this.getINIBoolean(ROOT, "ignore_repeated_errors", ignore_repeated_errors, true);
+            ignore_repeated_source = this.getINIBoolean(ROOT, "ignore_repeated_source", ignore_repeated_source, true);
+            report_memleaks = this.getINIBoolean(ROOT, "report_memleaks", report_memleaks, true);
+            track_error = this.getINIBoolean(ROOT, "track_error", track_error, true);
+            xmlrpc_errors = this.getINIBoolean(ROOT, "xmlrpc_errors", xmlrpc_errors, true);
+            xmlrpc_error_number = this.getINIInt(ROOT, "xmlrpc_error_number", xmlrpc_error_number, true);
+            html_errors = this.getINIBoolean(ROOT, "html_errors", html_errors, true);
+            docref_root = this.getINIString(ROOT, "docref_root", docref_root, true);
+            docref_ext = this.getINIString(ROOT, "docref_ext", docref_ext, true);
+            error_prepend_string = this.getINIString(ROOT, "error_prepend_string", error_prepend_string, true);
+            error_append_string = this.getINIString(ROOT, "error_append_string", error_append_string, true);
+            error_log = this.getINIString(ROOT, "error_log", error_log, true);
             
-            arg_separator_output = this.getINIString(CONFIG, ROOT, "arg_separator.output", arg_separator_output, true);
-            arg_separator_input = this.getINIString(CONFIG, ROOT, "arg_separator.input", arg_separator_input, true);
-            variables_order = this.getINIString(CONFIG, ROOT, "variables_order", variables_order, true);
-            super_global_order = this.getINIString(CONFIG, ROOT, "super_global_order", super_global_order, true);
-            register_args = this.getINIBoolean(CONFIG, ROOT, "register_args", register_args, true);
-            auto_register_system_globals = this.getINIBoolean(CONFIG, ROOT, "auto_register_system_globals", auto_register_system_globals, true);
-            enable_analyze_interface_data = this.getINIBoolean(CONFIG, ROOT, "enable_analyze_interface_data", enable_analyze_interface_data, true);
-            max_analyze_interface_size = this.getINIString(CONFIG, ROOT, "max_analyze_interface_size", max_analyze_interface_size, true);
-            max_interface_size = this.getINIString(CONFIG, ROOT, "max_interface_size", max_interface_size, true);
-            auto_prepend_file = this.getINIString(CONFIG, ROOT, "auto_prepend_file", auto_prepend_file, true);
-            auto_append_file = this.getINIString(CONFIG, ROOT, "auto_append_file", auto_append_file, true);
-            default_content_type = this.getINIString(CONFIG, ROOT, "default_content_type", default_content_type, true);
-            default_charset = this.getINIString(CONFIG, ROOT, "default_charset", default_charset, true);
-            internal_encoding = this.getINIString(CONFIG, ROOT, "internal_encoding", internal_encoding, true);
+            arg_separator_output = this.getINIString(ROOT, "arg_separator.output", arg_separator_output, true);
+            arg_separator_input = this.getINIString(ROOT, "arg_separator.input", arg_separator_input, true);
+            variables_order = this.getINIString(ROOT, "variables_order", variables_order, true);
+            super_global_order = this.getINIString(ROOT, "super_global_order", super_global_order, true);
+            register_args = this.getINIBoolean(ROOT, "register_args", register_args, true);
+            auto_register_system_globals = this.getINIBoolean(ROOT, "auto_register_system_globals", auto_register_system_globals, true);
+            enable_analyze_interface_data = this.getINIBoolean(ROOT, "enable_analyze_interface_data", enable_analyze_interface_data, true);
+            max_analyze_interface_size = this.getINIString(ROOT, "max_analyze_interface_size", max_analyze_interface_size, true);
+            max_interface_size = this.getINIString(ROOT, "max_interface_size", max_interface_size, true);
+            auto_prepend_file = this.getINIString(ROOT, "auto_prepend_file", auto_prepend_file, true);
+            auto_append_file = this.getINIString(ROOT, "auto_append_file", auto_append_file, true);
+            default_content_type = this.getINIString(ROOT, "default_content_type", default_content_type, true);
+            default_charset = this.getINIString(ROOT, "default_charset", default_charset, true);
+            internal_encoding = this.getINIString(ROOT, "internal_encoding", internal_encoding, true);
             
-            doc_root = this.getINIString(CONFIG, ROOT, "doc_root", doc_root, true);
-            user_dir = this.getINIString(CONFIG, ROOT, "user_dir", user_dir, true);
-            extension_dir = this.getINIString(CONFIG, ROOT, "extension_dir", extension_dir, true);
-            sys_temp_dir = this.getINIString(CONFIG, ROOT, "sys_temp_dir", sys_temp_dir, true);
+            doc_root = this.getINIString(ROOT, "doc_root", doc_root, true);
+            user_dir = this.getINIString(ROOT, "user_dir", user_dir, true);
+            extension_dir = this.getINIString(ROOT, "extension_dir", extension_dir, true);
+            sys_temp_dir = this.getINIString(ROOT, "sys_temp_dir", sys_temp_dir, true);
             
-            file_downloads = this.getINIBoolean(CONFIG, ROOT, "file_downloads", file_downloads, true);
-            download_tmp_dir = this.getINIString(CONFIG, ROOT, "download_tmp_dir", download_tmp_dir, true);
-            download_max_filesize = this.getINIString(CONFIG, ROOT, "download_max_filesize", download_max_filesize, true);
-            max_file_download = this.getINIInt(CONFIG, ROOT, "max_file_download", max_file_download, true);
+            file_downloads = this.getINIBoolean(ROOT, "file_downloads", file_downloads, true);
+            download_tmp_dir = this.getINIString(ROOT, "download_tmp_dir", download_tmp_dir, true);
+            download_max_filesize = this.getINIString(ROOT, "download_max_filesize", download_max_filesize, true);
+            max_file_download = this.getINIInt(ROOT, "max_file_download", max_file_download, true);
             
         } catch (IOException ex) {
             Logger.getLogger(Config.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
-    public String getINIString(Wini f, String seccion, String dato, String valor, boolean def){
-        if(f.get(seccion, dato) != null){
-            if(f.get(seccion, dato).matches(MATCHES_NONE))
-                return "";
-            
-            return f.get(seccion, dato).replaceAll("\"([^\"]*)\"", "$1");
-        }else{
-            if(def)
-                return valor;
-        }
-        
-        return "";
-    }
     
     public String getINIString(String seccion, String dato, String valor, boolean def){
+        // Verifica si viene en los argumentos
+        if(ARGS.contains(dato)){
+            Pattern p = Pattern.compile("/user_ini_cachettl=[\\s\\S]*?,/");
+            Matcher m = p.matcher(ARGS);
+            System.out.println(m.group(1));
+            if(m != null){
+                System.out.println(m.group(0));
+                return m.group(1);
+            }
+        }
         if(CONFIG.get(seccion, dato) != null){
             if(CONFIG.get(seccion, dato).matches(MATCHES_NONE))
                 return "";
@@ -325,23 +333,9 @@ public class Config {
         return "";
     }
     
-    public int getINIInt(Wini f, String seccion, String dato, int valor, boolean def){
-        if(f.get(seccion, dato) != null){
-            if(f.get(seccion, dato).matches(MATCHES_NONE))
-                return 0;
-            if(f.get(seccion, dato).matches(MATCHES_TRUE))
-                return 1;
-            if(f.get(seccion, dato).matches(MATCHES_FALSE))
-                return 0;
-            return Integer.valueOf(f.get(seccion, dato));
-        }else{
-            if(def)
-                return valor;
-            return 0;
-        }
-    }
     
     public int getINIInt(String seccion, String dato, int valor, boolean def){
+        // Verifica si viene en los argumentos
         if(CONFIG.get(seccion, dato) != null){
             if(CONFIG.get(seccion, dato).matches(MATCHES_NONE))
                 return 0;
@@ -355,15 +349,6 @@ public class Config {
                 return valor;
             return 0;
         }
-    }
-    
-    public boolean getINIBoolean(Wini f, String seccion, String dato, boolean valor, boolean def){
-        if(f.get(seccion, dato) == null){
-            if(def)
-                return valor;
-            return false;
-        }
-        return f.get(seccion, dato).matches(MATCHES_TRUE);
     }
     
     public boolean getINIBoolean(String seccion, String dato, boolean valor, boolean def){
