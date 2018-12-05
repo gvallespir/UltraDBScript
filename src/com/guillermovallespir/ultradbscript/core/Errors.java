@@ -5,11 +5,18 @@
  */
 package com.guillermovallespir.ultradbscript.core;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
- * @author gvallespir
+ * @author Guillermo Vallespir Wood
+ * @date 05-12-2018
+ * @version 1.0
  */
 public class Errors {
+    private static List<Error> errores;
+    
     public static enum Type{
         E_ERROR,
         E_WARNING,
@@ -24,5 +31,13 @@ public class Errors {
         E_USER_NOTICE,
         E_DEPRECATED,
         E_USER_DEPRECATED
+    }
+    
+    public Errors(){
+        errores = new ArrayList<>();
+    }
+    
+    public void addError(Type type, String file, String nodo, String error){
+        
     }
 }
