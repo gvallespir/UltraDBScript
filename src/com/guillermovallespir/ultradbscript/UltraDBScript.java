@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.guillermovallespir.ultradbscript;
 
 import com.guillermovallespir.ultradbscript.core.CommandLineParser;
@@ -12,7 +7,13 @@ import out.Out;
 
 /**
  *
- * @author guille
+ * @author Guillermo Vallespir Wood
+ * @date 03-12-2018
+ * @version 1.0
+ * 
+ * Historial de Cambios
+ * ====================
+ * 1. 03-05-2018. Se inicia la creación de la clase
  */
 public class UltraDBScript {
     
@@ -21,7 +22,7 @@ public class UltraDBScript {
         Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
         
         
-        // Se crea la sentencia para el parse de línea de comando
+        // Se crea el objeto para el parse de datos por línea de comando
         CommandLineParser clp = new CommandLineParser(args);
         
         
@@ -30,8 +31,11 @@ public class UltraDBScript {
         Config config = new Config(clp.getConfigs());
         
         
-        
+        // Se carga la librería de salidas por pantalla Out
         Out out = new Out(config);
+        
+        
+        // Inicia la ejecución de UltraDBScript
         out.Write("******************************", true);
         out.Write("**    UltraDBScript v1.0    **", true);
         out.Write("******************************", true);

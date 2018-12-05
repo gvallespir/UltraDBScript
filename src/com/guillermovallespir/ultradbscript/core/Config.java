@@ -204,6 +204,23 @@ public class Config {
         return max_params;
     }
     
+    public String get_memory_limit(){
+        return memory_limit;
+    }
+    
+    public String get_error_reporting(){
+        return error_reporting;
+    }
+    
+    public boolean has_error_reporting(String error){
+        if(error_reporting.contains("~" + error))
+            return false;
+        if(error_reporting.contains(error))
+            return true;
+        
+        return false;
+    }
+    
     public Config(String[] args){
         // Primero se carga el archivo de configuración INI, o se intenta cargarlo
         
@@ -237,6 +254,7 @@ public class Config {
             StringBuilder builder = new StringBuilder();
             for(String s : args) {
                 builder.append(s);
+                builder.append(",");
             }
             ARGS = builder.toString();
             
@@ -302,7 +320,7 @@ public class Config {
             download_tmp_dir = this.getINIString(ROOT, "download_tmp_dir", download_tmp_dir, true);
             download_max_filesize = this.getINIString(ROOT, "download_max_filesize", download_max_filesize, true);
             max_file_download = this.getINIInt(ROOT, "max_file_download", max_file_download, true);
-            
+
         } catch (IOException ex) {
             Logger.getLogger(Config.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -312,14 +330,12 @@ public class Config {
     public String getINIString(String seccion, String dato, String valor, boolean def){
         // Verifica si viene en los argumentos
         if(ARGS.contains(dato)){
-            Pattern p = Pattern.compile("/user_ini_cachettl=[\\s\\S]*?,/");
-            Matcher m = p.matcher(ARGS);
-            System.out.println(m.group(1));
-            if(m != null){
-                System.out.println(m.group(0));
-                return m.group(1);
-            }
+            Pattern pattern = Pattern.compile(dato + "=(.+?),", Pattern.DOTALL);
+            Matcher matcher = pattern.matcher(ARGS);
+            matcher.find();
+            return matcher.group(1);
         }
+        
         if(CONFIG.get(seccion, dato) != null){
             if(CONFIG.get(seccion, dato).matches(MATCHES_NONE))
                 return "";
@@ -336,6 +352,19 @@ public class Config {
     
     public int getINIInt(String seccion, String dato, int valor, boolean def){
         // Verifica si viene en los argumentos
+        if(ARGS.contains(dato)){
+            Pattern pattern = Pattern.compile(dato + "=(.+?),", Pattern.DOTALL);
+            Matcher matcher = pattern.matcher(ARGS);
+            matcher.find();
+            if(matcher.group(1).matches(MATCHES_NONE))
+                return 0;
+            if(matcher.group(1).matches(MATCHES_TRUE))
+                return 1;
+            if(matcher.group(1).matches(MATCHES_FALSE))
+                return 0;
+            return Integer.valueOf(matcher.group(1));
+        }
+        
         if(CONFIG.get(seccion, dato) != null){
             if(CONFIG.get(seccion, dato).matches(MATCHES_NONE))
                 return 0;
@@ -352,6 +381,14 @@ public class Config {
     }
     
     public boolean getINIBoolean(String seccion, String dato, boolean valor, boolean def){
+        // Verifica si viene en los argumentos
+        if(ARGS.contains(dato)){
+            Pattern pattern = Pattern.compile(dato + "=(.+?),", Pattern.DOTALL);
+            Matcher matcher = pattern.matcher(ARGS);
+            matcher.find();
+            return matcher.group(1).matches(MATCHES_TRUE);
+        }
+        
         if(CONFIG.get(seccion, dato) == null){
             if(def)
                 return valor;
