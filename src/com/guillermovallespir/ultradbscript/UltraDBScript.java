@@ -6,18 +6,19 @@
 package com.guillermovallespir.ultradbscript;
 
 import com.guillermovallespir.ultradbscript.core.Config;
-import org.ini4j.Wini;
+import java.util.Calendar;
 import out.Out;
-import static out.Out.Type.*;
 
 /**
  *
  * @author guille
  */
 public class UltraDBScript {
-    public static Wini CONFIG;
     
     public static void main(String[] args) {
+        // Se le asigna la máxima prioridad de ejecución
+        Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+        
         // Se carga la configuración
         Config config = new Config(args);
         
@@ -27,10 +28,8 @@ public class UltraDBScript {
         out.Write("******************************", true);
         out.Write("Ultra DBScript (r) - Todos los derechos reservados", false);
         out.Write("Ultra DBScript corriendo sobre " + System.getProperty("os.name") + " versión " + System.getProperty("os.version") + " arquitectura " + System.getProperty("os.arch"), false);
-        System.out.println();
-        out.Write("Iniciando UltraDBScript v1.0", false);
-        out.Write("============================", false);
-        out.Write(E_ERROR, "Hola mundo error", true);
+        out.Write("------------------------------------------- [ Ultra DBScript ] -------------------------------------------", false);
+        out.Write("UltraDBScript iniciando " + Calendar.getInstance().getTime().toString(), false);
     }
     
 }
