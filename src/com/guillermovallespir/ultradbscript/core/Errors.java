@@ -17,6 +17,10 @@ import java.util.List;
 public class Errors {
     private static List<Error> errores;
     
+    private String error_reporting;
+    private boolean log_errors;
+    private String error_log;
+    
     public static enum Type{
         E_ERROR,
         E_WARNING,
@@ -33,8 +37,12 @@ public class Errors {
         E_USER_DEPRECATED
     }
     
-    public Errors(){
+    public Errors(Config config){
         errores = new ArrayList<>();
+
+        error_reporting = config.get_error_reporting();
+        log_errors = config.get_log_errors();
+        error_log = config.get_error_log();
     }
     
     public void addError(Type type, String file, String nodo, String error){

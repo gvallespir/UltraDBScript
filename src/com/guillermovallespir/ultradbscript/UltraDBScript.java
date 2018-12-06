@@ -2,6 +2,7 @@ package com.guillermovallespir.ultradbscript;
 
 import com.guillermovallespir.ultradbscript.core.CommandLineParser;
 import com.guillermovallespir.ultradbscript.core.Config;
+import com.guillermovallespir.ultradbscript.core.Errors;
 import java.util.Calendar;
 import out.Out;
 
@@ -26,9 +27,12 @@ public class UltraDBScript {
         CommandLineParser clp = new CommandLineParser(args);
         
         
-        
         // Se carga la configuración
         Config config = new Config(clp.getConfigs());
+        
+        
+        // Se carga la librería de manipulación de errores
+        Errors errors = new Errors(config);
         
         
         // Se carga la librería de salidas por pantalla Out
