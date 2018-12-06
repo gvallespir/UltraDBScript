@@ -27,6 +27,7 @@ public class CommandLineParser {
                 .setList(true)
                 .setListSeparator(',')
                 .setGreedy(true);
+        opt_files.setHelp("Lista de archivos UDBSXML a ser ejecutados por UltraDBScript.");
         
         FlaggedOption opt_configs = new FlaggedOption("configs")
                 .setAllowMultipleDeclarations(true)
@@ -34,13 +35,15 @@ public class CommandLineParser {
                 .setListSeparator(',')
                 .setRequired(false)
                 .setLongFlag("Config")
-                .setShortFlag('c');
+                .setShortFlag('c')
+                .setUsageName("config");
+        opt_configs.setHelp("Setea configuración manual a través de líneas de comando");
 
 
         // Se registran las entradas
         try {
-            jsap.registerParameter(opt_files);
             jsap.registerParameter(opt_configs);
+            jsap.registerParameter(opt_files);
         } catch (JSAPException ex) {
             System.out.println("");
         }
@@ -48,9 +51,21 @@ public class CommandLineParser {
         
         
         result = jsap.parse(args);
+        
+        if(!result.success()){
+            System.err.println("UltraDBScript. Error Fatal. Error de parseo de parámetros por línea de comandos");
+            System.err.println("UltraDBScript uso: " + jsap.getUsage());
+            System.err.println();
+            System.err.println(jsap.getHelp());
+            System.exit(1);
+        }
     }
     
     public String[] getConfigs(){
         return result.getStringArray("configs");
+    }
+    
+    public String[] getFiles(){
+        return result.getStringArray("files");
     }
 }
