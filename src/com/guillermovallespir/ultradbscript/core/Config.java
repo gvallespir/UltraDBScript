@@ -229,6 +229,10 @@ public class Config {
         return error_log;
     }
     
+    public boolean get_display_errors(){
+        return display_errors;
+    }
+    
     public Config(String[] args){
         // Primero se carga el archivo de configuración INI, o se intenta cargarlo
         
