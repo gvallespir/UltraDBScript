@@ -5,7 +5,9 @@
  */
 package out;
 
+import com.bethecoder.ascii_table.ASCIITable;
 import com.guillermovallespir.ultradbscript.core.Config;
+import java.util.ArrayList;
 import org.fusesource.jansi.Ansi;
 import static org.fusesource.jansi.Ansi.ansi;
 
@@ -26,6 +28,8 @@ public class Out extends OutBase{
         E_CORE_WARNING,
         E_COMPILE_ERROR,
         E_COMPILE_WARNING,
+        E_PARSE_ERROR,
+        E_PARSE_WARNING,
         E_USER_ERROR,
         E_USER_WARNING,
         E_USER_NOTICE,
@@ -35,6 +39,10 @@ public class Out extends OutBase{
     
     public Out(Config config) {
         super(config);
+    }
+    
+    public void WriteTable(String[] headers, ArrayList<String[]> data) {
+        ASCIITable.getInstance().printTable(headers, (String[][]) data.toArray(new String[0][0]));
     }
     
     public void Write(String text, boolean tab){

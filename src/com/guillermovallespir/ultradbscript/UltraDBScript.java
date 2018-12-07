@@ -1,5 +1,6 @@
 package com.guillermovallespir.ultradbscript;
 
+import com.guillermovallespir.ultradbscript.Structures.Parameters;
 import com.guillermovallespir.ultradbscript.core.CommandLineParser;
 import com.guillermovallespir.ultradbscript.core.Config;
 import com.guillermovallespir.ultradbscript.core.Errors;
@@ -17,6 +18,7 @@ import out.Out;
  * 1. 03-05-2018. Se inicia la creación de la clase
  */
 public class UltraDBScript {
+    public static Parameters PARAMS;
     
     public static void main(String[] args) {
         // Se le asigna la máxima prioridad de ejecución
@@ -33,6 +35,10 @@ public class UltraDBScript {
         
         // Se carga la librería de manipulación de errores
         Errors errors = new Errors(config);
+        
+        
+        // Se carga la librería para la manipulación de parámetros
+        PARAMS = new Parameters();
         
         
         // Se carga la librería de salidas por pantalla Out

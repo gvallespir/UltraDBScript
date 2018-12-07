@@ -13,6 +13,6 @@ public class Helper {
     private static String DEPRECATED_FUNCTIONS = "";
     
     public static boolean isDeprecatedFunction(String function){
-        return DEPRECATED_FUNCTIONS.contains(function);
+        return DEPRECATED_FUNCTIONS.toLowerCase().contains(function.toLowerCase());
     }
 }
