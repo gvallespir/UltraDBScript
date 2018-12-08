@@ -9,7 +9,6 @@ import com.guillermovallespir.ultradbscript.UltraDBScript;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.sql.Statement;
 import org.w3c.dom.NamedNodeMap;
 import out.Out;
 
@@ -94,9 +93,9 @@ public class DataBaseProcess extends Process{
             Class.forName("com.mysql.jdbc.Driver");
             
             Connection conn = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database, user, password);
-            Statement st = conn.createStatement();
+
             
-            UltraDBScript.PARAMS.addDataBase(id, type, host, port, database, user, password, st);
+            UltraDBScript.PARAMS.addDataBase(id, type, host, port, database, user, password, conn);
             
         } catch (ClassNotFoundException ex) {
             this.out.Write(Out.Type.E_ERROR, FILE, TAG, "Ocurrió un error inesperado al realizar la conexión con la base de datos.\n" + ex.getLocalizedMessage());

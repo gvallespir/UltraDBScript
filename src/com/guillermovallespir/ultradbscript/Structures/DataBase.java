@@ -5,7 +5,11 @@
  */
 package com.guillermovallespir.ultradbscript.Structures;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -19,9 +23,10 @@ public class DataBase {
     private String database;
     private String user;
     private String password;
+    private Connection connection;
     private Statement statement;
     
-    public DataBase(String id, String type, String host, String port, String database, String user, String password, Statement statement){
+    public DataBase(String id, String type, String host, String port, String database, String user, String password, Connection connection){
         this.id = id;
         this.type = type;
         this.host = host;
@@ -29,7 +34,12 @@ public class DataBase {
         this.database = database;
         this.user = user;
         this.password = password;
-        this.statement = statement;
+        this.connection = connection;
+        try {
+            this.statement = this.connection.createStatement();
+        } catch (SQLException ex) {
+            Logger.getLogger(DataBase.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     public boolean isMe(String id){
@@ -56,7 +66,20 @@ public class DataBase {
         return this.database;
     }
     
+    public Connection getConnection(){
+        return this.connection;
+    }
+    
     public Statement getStatement(){
         return this.statement;
+    }
+    
+    public void close(){
+        try {
+            this.connection.close();
+            this.statement.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(DataBase.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

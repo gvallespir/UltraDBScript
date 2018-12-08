@@ -46,13 +46,34 @@ public class UltraDBScript {
         
         
         // Inicia la ejecución de UltraDBScript
-        out.Write("******************************", true);
-        out.Write("**    UltraDBScript v1.0    **", true);
-        out.Write("******************************", true);
+        out.Write("\t\t\t\t******************************", true);
+        out.Write("\t\t\t\t**    UltraDBScript v1.0    **", true);
+        out.Write("\t\t\t\t******************************", true);
         out.Write("Ultra DBScript (r) - Todos los derechos reservados", false);
         out.Write("Ultra DBScript corriendo sobre " + System.getProperty("os.name") + " versión " + System.getProperty("os.version") + " arquitectura " + System.getProperty("os.arch"), false);
-        out.Write("------------------------------------------- [ Ultra DBScript ] -------------------------------------------", false);
-        out.Write("UltraDBScript iniciando " + Calendar.getInstance().getTime().toString(), false);
+        out.Write("---------------------------------------------- [ Ultra DBScript ] ----------------------------------------------", false);
+        out.Write("UltraDBScript iniciando " + Calendar.getInstance().getTime().toLocaleString(), false);
+        System.out.println();
+        out.Write("Se inicia la lectura estructurada de los archivos XML / UDBSXML", false);
+        
+        
+        // Se obtiene la lista de archivos XML / UDBSXML que serán procesados
+        String[] archivos = clp.getFiles();
+        
+        
+        // Verifica si existen archivos que leer
+        if(archivos.length == 0){
+            out.Write(Out.Type.E_ERROR, "", "ULTRADBSCRIPT", "No existen archivos XML / UDBSXML que procesar");
+        }
+        out.Write("- Lista de los archivos XML / UDBSXML que serán procesados", false);
+        
+        
+        // Se recorren y procesan los archivos XML / UDBSXML
+        for(int i = 0; i < archivos.length; i++){
+            out.Write("[XML FILE] - Se inicia el procesamiento del archivo " + archivos[i], false);
+            
+        }
+        
     }
     
 }
