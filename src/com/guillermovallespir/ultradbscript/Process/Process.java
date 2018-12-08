@@ -40,7 +40,7 @@ public abstract class Process {
     
     public void isDeprecated(){
         if(Helper.isDeprecatedFunction(TAG)){
-            out.Write(Out.Type.E_DEPRECATED, FILE, TAG, "Esta función está marcada como deprecada y pronto podría no estar disponible.");
+            out.Write(Out.Type.E_DEPRECATED, FILE, TAG, "Esta función está marcada como deprecada y pronto podría no estar disponible.", false);
         }
     }
     

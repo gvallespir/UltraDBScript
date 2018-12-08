@@ -13,26 +13,22 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
+import out.Out;
 
 /**
  *
  * @author guille
  */
 public class XML_Parse {
-    private java.io.File file;
-    private String ruta;
-    
-    
-    public XML_Parse(java.io.File file){
+    public XML_Parse(Out out, java.io.File file){
         
-        this.file = file;
-        this.ruta = this.file.getAbsolutePath();
-            
+        String ruta = file.getAbsolutePath();
+        
         Document document = null;
         try {    
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             DocumentBuilder documentBuilder = dbf.newDocumentBuilder();
-            document = documentBuilder.parse(this.file);
+            document = documentBuilder.parse(file);
         } catch (ParserConfigurationException ex) {
             Logger.getLogger(XML_Parse.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SAXException ex) {
@@ -42,5 +38,7 @@ public class XML_Parse {
         }
         
         document.getDocumentElement().normalize();
+        
+        out.Write(Out.Type.NORMAL, ruta, "XML_FILE", "Se inicia la lectura del archivo XML", false);
     }
 }

@@ -20,7 +20,7 @@ public class IncludeProcess extends Process{
 
     @Override
     public void Execute() {
-        this.out.Write(Out.Type.NORMAL, "", TAG, "Inclusión de documento XML / UDBSXML");
+        this.out.Write(Out.Type.NORMAL, "", TAG, "Inclusión de documento XML / UDBSXML", false);
         
         // Verifica si está marcada como deprecada
         this.isDeprecated();
@@ -47,7 +47,7 @@ public class IncludeProcess extends Process{
         
         // Verifica que las etiquetas obligatorias tengan valor
         if(xml_file == null){
-            this.out.Write(Out.Type.E_ERROR, "", TAG, "El tag INCLUDE no contiene la instrucción 'xml_file'");
+            this.out.Write(Out.Type.E_ERROR, "", TAG, "El tag INCLUDE no contiene la instrucción 'xml_file'", false);
         }
         
         

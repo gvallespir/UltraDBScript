@@ -1,9 +1,11 @@
 package com.guillermovallespir.ultradbscript;
 
+import com.guillermovallespir.ultradbscript.Process.XML_Parse;
 import com.guillermovallespir.ultradbscript.Structures.Parameters;
 import com.guillermovallespir.ultradbscript.core.CommandLineParser;
 import com.guillermovallespir.ultradbscript.core.Config;
 import com.guillermovallespir.ultradbscript.core.Errors;
+import java.io.File;
 import java.util.Calendar;
 import out.Out;
 
@@ -52,8 +54,7 @@ public class UltraDBScript {
         out.Write("Ultra DBScript (r) - Todos los derechos reservados", false);
         out.Write("Ultra DBScript corriendo sobre " + System.getProperty("os.name") + " versión " + System.getProperty("os.version") + " arquitectura " + System.getProperty("os.arch"), false);
         out.Write("---------------------------------------------- [ Ultra DBScript ] ----------------------------------------------", false);
-        out.Write("UltraDBScript iniciando " + Calendar.getInstance().getTime().toLocaleString(), false);
-        System.out.println();
+        out.Write("UltraDBScript iniciando el " + Calendar.getInstance().getTime().toLocaleString().replace(" ", " a las ") + " horas", false);
         out.Write("Se inicia la lectura estructurada de los archivos XML / UDBSXML", false);
         
         
@@ -63,7 +64,7 @@ public class UltraDBScript {
         
         // Verifica si existen archivos que leer
         if(archivos.length == 0){
-            out.Write(Out.Type.E_ERROR, "", "ULTRADBSCRIPT", "No existen archivos XML / UDBSXML que procesar");
+            out.Write(Out.Type.E_ERROR, "", "ULTRADBSCRIPT", "No existen archivos XML / UDBSXML que procesar", false);
         }
         out.Write("- Lista de los archivos XML / UDBSXML que serán procesados", false);
         
@@ -72,6 +73,7 @@ public class UltraDBScript {
         for(int i = 0; i < archivos.length; i++){
             out.Write("[XML FILE] - Se inicia el procesamiento del archivo " + archivos[i], false);
             
+            new XML_Parse(out, new File(archivos[i]));
         }
         
     }

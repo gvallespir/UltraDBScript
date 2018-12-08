@@ -28,7 +28,7 @@ public class DataBaseProcess extends Process{
 
     @Override
     public void Execute() {
-        this.out.Write(Out.Type.NORMAL, this.FILE, TAG, "Conexión a una base de datos");
+        this.out.Write(Out.Type.NORMAL, this.FILE, TAG, "Conexión a una base de datos", false);
         
         
         // Verifica si está marcada como deprecada
@@ -69,15 +69,15 @@ public class DataBaseProcess extends Process{
         
         // Verifica que las etiquetas obligatorias tengan valor
         if(type == null)
-            this.out.Write(Out.Type.E_PARSE_ERROR, FILE, TAG, "Falta el parámetro 'type o db_type'");
+            this.out.Write(Out.Type.E_PARSE_ERROR, FILE, TAG, "Falta el parámetro 'type o db_type'", false);
         if(host == null)
-            this.out.Write(Out.Type.E_PARSE_ERROR, FILE, TAG, "Falta el parámetro 'host'");
+            this.out.Write(Out.Type.E_PARSE_ERROR, FILE, TAG, "Falta el parámetro 'host'", false);
         if(database == null)
-            this.out.Write(Out.Type.E_PARSE_ERROR, FILE, TAG, "Falta el parámetro 'database'");
+            this.out.Write(Out.Type.E_PARSE_ERROR, FILE, TAG, "Falta el parámetro 'database'", false);
         if(user == null)
-            this.out.Write(Out.Type.E_PARSE_ERROR, FILE, TAG, "Falta el parámetro 'user'");
+            this.out.Write(Out.Type.E_PARSE_ERROR, FILE, TAG, "Falta el parámetro 'user'", false);
         if(password == null)
-            this.out.Write(Out.Type.E_PARSE_ERROR, FILE, TAG, "Falta el parámetro 'password'");
+            this.out.Write(Out.Type.E_PARSE_ERROR, FILE, TAG, "Falta el parámetro 'password'", false);
         
         
         // Se establecen las configuraciones por defecto si son necesarias
@@ -98,9 +98,9 @@ public class DataBaseProcess extends Process{
             UltraDBScript.PARAMS.addDataBase(id, type, host, port, database, user, password, conn);
             
         } catch (ClassNotFoundException ex) {
-            this.out.Write(Out.Type.E_ERROR, FILE, TAG, "Ocurrió un error inesperado al realizar la conexión con la base de datos.\n" + ex.getLocalizedMessage());
+            this.out.Write(Out.Type.E_ERROR, FILE, TAG, "Ocurrió un error inesperado al realizar la conexión con la base de datos.\n" + ex.getLocalizedMessage(), false);
         } catch (SQLException ex) {
-            this.out.Write(Out.Type.E_ERROR, FILE, TAG, "La conexión a la base de datos no puedo realizarse.\n" + ex.getLocalizedMessage());
+            this.out.Write(Out.Type.E_ERROR, FILE, TAG, "La conexión a la base de datos no puedo realizarse.\n" + ex.getLocalizedMessage(), false);
         }
     }
 }

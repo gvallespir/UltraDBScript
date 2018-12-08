@@ -21,7 +21,7 @@ public class SQLProcess extends Process{
 
     @Override
     public void Execute() {
-        this.out.Write(Out.Type.NORMAL, this.FILE, TAG, "Se ejecutará una instrucción SQL");
+        this.out.Write(Out.Type.NORMAL, this.FILE, TAG, "Se ejecutará una instrucción SQL", false);
         
         
         // Verifica si está marcada como deprecada
