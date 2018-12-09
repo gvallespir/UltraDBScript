@@ -23,8 +23,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import org.fusesource.jansi.Ansi;
 import static org.fusesource.jansi.Ansi.ansi;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
  *
@@ -61,7 +69,8 @@ public class Update {
                 + "`paq_nombre` VARCHAR(100) NOT NULL,\n"
                 + "`paq_descripcion` TEXT NULL,\n"
                 + "`paq_version` INT NOT NULL,\n"
-                + "`paq_version_str` VARCHAR(10) NOT NULL\n,"
+                + "`paq_version_str` VARCHAR(10) NOT NULL,\n"
+                + "`paq_url` VARCHAR(255) NOT NULL,\n"
                 + "`paq_fecha_version` DATETIME NOT NULL\n"
                 + ");";
         
@@ -101,12 +110,32 @@ public class Update {
         try {
             Statement st = conn.createStatement();
             
-            //st.executeQuery(sql);
+            st.executeQuery(sql);
             
         } catch (SQLException ex) {
             Logger.getLogger(Update.class.getName()).log(Level.SEVERE, null, ex);
         }
         
+    }
+    
+    public String[][] getListServers(){
+        String sql = "SELECT ser_servidor_id, ser_nombre, ser_url, ser_estado FROM ser_servidor ORDER BY ser_servidor_id";
+        
+        Statement st;
+        ArrayList<String[]> retorno = new ArrayList<>();
+        
+        try {
+            st = conn.createStatement();
+            ResultSet rs = st.executeQuery(sql);
+       
+            while(rs.next()){
+                retorno.add(new String[]{rs.getString("ser_servidor_id"), rs.getString("ser_nombre"), rs.getString("ser_url"), rs.getString("ser_estado").equals("1") ? "On" : "Off"});
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Update.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return (String[][]) retorno.toArray(new String[0][0]);
     }
     
     
@@ -122,7 +151,7 @@ public class Update {
             Statement st = conn.createStatement();
             
             ResultSet rs = st.executeQuery("SELECT ser_servidor_id, ser_nombre, ser_url FROM ser_servidor WHERE ser_estado='1';");
-            List<String> xml_files = new ArrayList<>();
+            ArrayList<String[]> xml_files = new ArrayList<>();
             
             while(rs.next()){
                 if(!silence)
@@ -136,7 +165,7 @@ public class Update {
                     FileOutputStream fos = new FileOutputStream(nombre);
                     fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
                     
-                    xml_files.add(nombre);
+                    xml_files.add(new String[]{rs.getString("ser_servidor_id"), nombre});
                     
                     if(!silence)
                         System.out.println(ansi().fg(Ansi.Color.GREEN).a("\t[OK]").reset());
@@ -154,10 +183,45 @@ public class Update {
             if(!silence)
                 System.out.println("\tSe inicia la lectura de los repositorios remotos y match con los repositorios locales");
             for(int i = 0; i < xml_files.size(); i++){
-                File f = new File(xml_files.get(i));
-                XML_Parse xml_parse = new XML_Parse(null, f);
+                File f = new File(xml_files.get(i)[1]);
                 
-                f.delete();
+                Document document = null;
+                try {    
+                    DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+                    DocumentBuilder documentBuilder = dbf.newDocumentBuilder();
+                    document = documentBuilder.parse(f);
+                } catch (ParserConfigurationException ex) {
+                    Logger.getLogger(XML_Parse.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (SAXException ex) {
+
+                } catch (IOException ex) {
+
+                }
+                
+                document.getDocumentElement().normalize();
+                
+                Element element = document.getDocumentElement();
+                
+                NodeList nodos = element.getChildNodes();
+                for(int x = 0; x < nodos.getLength(); x++){
+                    if(nodos.item(x).getNodeType() == (Node.ELEMENT_NODE)){
+                        Element e = (Element) nodos.item(x);
+                        
+                        if(e.getNodeName().equalsIgnoreCase("paquete")){
+                            // Agrega si no existe, actualiza si existe
+                            
+                            String id = e.getAttribute("id");
+                            String nombre = e.getAttribute("name");
+                            String desc = e.hasAttribute("desc") ? e.getAttribute("desc") : "";
+                            String version = e.getAttribute("version");
+                            String version_str = e.getAttribute("version_str");
+                            
+                            String sql = "INSERT OR REPLACE INTO `paq_paquete` (`paq_paquete_id`, `paq_ser_servidor_id`, `paq_nombre`, `paq_descripcion`, `paq_version`, `paq_version_str`, `paq_fecha_version`)"
+                                    + "VALUES ('" + e.getAttribute("id") + "' , '" + xml_files.get(i)[0] + "', '" + e.getAttribute("name")+ "', '" + e.getAttribute("desc")+ "');";
+                        }
+                    }
+                }
+                //f.delete();
             }
         } catch (SQLException ex) {
             Logger.getLogger(Update.class.getName()).log(Level.SEVERE, null, ex);

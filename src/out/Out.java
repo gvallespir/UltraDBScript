@@ -42,7 +42,11 @@ public class Out extends OutBase{
     }
     
     public void WriteTable(String[] headers, ArrayList<String[]> data) {
-        ASCIITable.getInstance().printTable(headers, (String[][]) data.toArray(new String[0][0]));
+        ASCIITable.getInstance().printTable(headers, (String[][]) data.toArray(new String[0][0]), ASCIITable.ALIGN_LEFT);
+    }
+    
+    public void WriteTable(String[] headers, String[][] data){
+        ASCIITable.getInstance().printTable(headers, data, ASCIITable.ALIGN_LEFT);
     }
     
     public void Write(String text, boolean tab){

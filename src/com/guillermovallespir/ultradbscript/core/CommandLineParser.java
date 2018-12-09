@@ -11,6 +11,8 @@ import com.martiansoftware.jsap.JSAPException;
 import com.martiansoftware.jsap.JSAPResult;
 import com.martiansoftware.jsap.Switch;
 import com.martiansoftware.jsap.UnflaggedOption;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -42,12 +44,15 @@ public class CommandLineParser {
                 .setUsageName("config");
         opt_configs.setHelp("Setea configuración manual a través de líneas de comando");
         
-        FlaggedOption opt_add_server = new FlaggedOption("add_server")
+        FlaggedOption opt_add_servers = new FlaggedOption("add-server")
                 .setAllowMultipleDeclarations(false)
                 .setList(false)
                 .setRequired(false)
-                .setLongFlag("add_server")
+                .setLongFlag("add-server")
                 .setShortFlag(JSAP.NO_SHORTFLAG);
+        
+         Switch opt_list_servers = new Switch("list-servers")
+                .setLongFlag("list-servers");
         
         Switch opt_update = new Switch("update")
                 .setLongFlag("update")
@@ -65,7 +70,8 @@ public class CommandLineParser {
             jsap.registerParameter(opt_files);
             jsap.registerParameter(opt_update);
             jsap.registerParameter(opt_upgrade);
-            jsap.registerParameter(opt_add_server);
+            jsap.registerParameter(opt_add_servers);
+            jsap.registerParameter(opt_list_servers);
         } catch (JSAPException ex) {
             System.out.println("");
         }
@@ -73,30 +79,77 @@ public class CommandLineParser {
         
         
         result = jsap.parse(args);
-        
-        if(!result.success()){
-            System.err.println("UltraDBScript. Error Fatal. Error de parseo de parámetros por línea de comandos");
-            System.err.println("UltraDBScript uso: " + jsap.getUsage());
-            System.err.println();
-            System.err.println(jsap.getHelp());
-            System.exit(1);
+        if((!result.userSpecified("add-server")) && (!result.userSpecified("list-servers")))
+            if(!result.success()){
+                System.err.println("UltraDBScript. Error Fatal. Error de parseo de parámetros por línea de comandos");
+                System.err.println("UltraDBScript uso: " + jsap.getUsage());
+                System.err.println();
+                System.err.println(jsap.getHelp());
+                System.exit(1);
         }
+    }
+    
+    public boolean isListServers(){
+        return result.userSpecified("list-servers");
     }
     
     public boolean isAddServer(){
-        return result.userSpecified("add_server");
+        return result.userSpecified("add-server");
     }
     
-    public String[] getAddServer(){
-        StringBuilder argumentos = new StringBuilder();
-        for(int i = 0; i < this.args.length; i++){
-            argumentos.append(this.args[i]);
-            argumentos.append(" ");
+    public JSAPResult getAddServer(){
+        JSAP jsap = new JSAP();
+        
+        Switch opt_add_server = new Switch("add-server")
+                .setLongFlag("add-server");
+        
+        FlaggedOption opt_id = new FlaggedOption("id")
+                .setAllowMultipleDeclarations(false)
+                .setList(false)
+                .setRequired(true)
+                .setLongFlag("id")
+                .setShortFlag('i');
+        
+        FlaggedOption opt_nombre = new FlaggedOption("name")
+                .setAllowMultipleDeclarations(false)
+                .setList(false)
+                .setRequired(true)
+                .setLongFlag("name")
+                .setShortFlag('n');
+        
+        FlaggedOption opt_desc = new FlaggedOption("desc")
+                .setAllowMultipleDeclarations(false)
+                .setList(false)
+                .setRequired(false)
+                .setLongFlag("desc")
+                .setShortFlag('d');
+        
+        FlaggedOption opt_url = new FlaggedOption("url")
+                .setAllowMultipleDeclarations(false)
+                .setList(false)
+                .setRequired(true)
+                .setLongFlag("url")
+                .setShortFlag('u');
+        
+        try {
+            jsap.registerParameter(opt_add_server);
+            jsap.registerParameter(opt_id);
+            jsap.registerParameter(opt_nombre);
+            jsap.registerParameter(opt_desc);
+            jsap.registerParameter(opt_url);
+        } catch (JSAPException ex) {
+            Logger.getLogger(CommandLineParser.class.getName()).log(Level.SEVERE, null, ex);
         }
-        String args1 = argumentos.toString();
-        args1 = args1.substring(args1.indexOf("--add_server") + 13);
-        System.out.println(args1);
-        return args1.split(" ");
+        
+        JSAPResult jres = jsap.parse(this.args);
+        
+        if(!jres.success()){
+            System.err.println("[ERROR FATAL] - Add Server Error - Parseo de línea de comandos error");
+            System.err.println("Add Server Uso: " + jsap.getUsage());
+            System.exit(1);
+        }
+                
+        return jres;
     }
     
     public boolean isUpdate(){

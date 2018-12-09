@@ -6,6 +6,7 @@ import com.guillermovallespir.ultradbscript.core.CommandLineParser;
 import com.guillermovallespir.ultradbscript.core.Config;
 import com.guillermovallespir.ultradbscript.core.Errors;
 import com.guillermovallespir.ultradbscript.updates.Update;
+import com.martiansoftware.jsap.JSAPResult;
 import java.io.File;
 import java.util.Calendar;
 import out.Out;
@@ -84,7 +85,20 @@ public class UltraDBScript {
             // El arranque de UltraDBScript es de agregación de repositorio de actualización
             out.Write(Out.Type.NORMAL, "", "UPDATE", "Se agrega un nuevo repositorio UltraDBScript", false);
             Update update = new Update();
-            clp.getAddServer();
+            JSAPResult result = clp.getAddServer();
+            out.WriteTable(new String[]{"ID", "Nombre", "Descripcion", "URL"}, new String[][]{{result.getString("id"), result.getString("name"), result.getString("desc"), result.getString("url")}});
+            out.Write(Out.Type.NORMAL, "", "UPDATE", "Escribiendo en la base de datos . . .", false);
+            update.add_repository(result.getString("id"), result.getString("name"), result.getString("desc"), result.getString("url"));
+            out.Write(Out.Type.NORMAL, "", "UPDATE", "Se inicia la actualización de los repositorios", false);
+            update.intUpdate();
+            System.exit(0);
+        }
+        
+        if(clp.isListServers()){
+            // El arranque de UltraDBScript es de agregación de repositorio de actualización
+            out.Write(Out.Type.NORMAL, "", "UPDATE", "Se listan los repositorios de UltraDBScript", false);
+            Update update = new Update();
+            out.WriteTable(new String[]{"ID", "Nombre", "URL", "Estado"}, update.getListServers());
             System.exit(0);
         }
         
