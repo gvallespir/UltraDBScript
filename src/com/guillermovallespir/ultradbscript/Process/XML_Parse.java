@@ -12,6 +12,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import out.Out;
 
@@ -39,6 +41,19 @@ public class XML_Parse {
         
         document.getDocumentElement().normalize();
         
-        out.Write(Out.Type.NORMAL, ruta, "XML_FILE", "Se inicia la lectura del archivo XML", false);
+        if(out != null){
+            out.Write(Out.Type.NORMAL, ruta, "XML_FILE", "Se inicia la lectura del archivo XML", false);
+        }else{
+            // Se inicia el parse de actualización
+            
+            NodeList node = document.getElementsByTagName("REPOSITORIOS");
+            
+            
+            for(int i = 0; i < node.getLength(); i++){
+                Element element = (Element) node.item(i);
+                
+                System.out.println(element.getNodeName());
+            }
+        }
     }
 }

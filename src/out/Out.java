@@ -51,12 +51,8 @@ public class Out extends OutBase{
         System.out.println(text);
     }
     
-    /*public void Write(Type type, String file, String nodo, String text){
-        if((nodo != null) && (nodo.compareTo("") != 0))
-            System.out.print("\t");
-        
-        
-    }*/
+
+    
     
     public void Write(Type type, String file, String tag, String text, boolean tab){
         if(tab)
@@ -69,7 +65,7 @@ public class Out extends OutBase{
                     break;
                 case E_ERROR:
                     System.out.println(ansi().fg(Ansi.Color.RED).a("[ERROR FATAL] - " + text).reset());
-                    System.out.println(ansi().fg(Ansi.Color.RED).a("La ejecución de UltraDBScript se ha detenido a causa de un error fatal").reset());
+                    System.out.println(ansi().fg(Ansi.Color.RED).a("La ejecución de UltraDBScript ha sido detenida a causa de un error fatal").reset());
                     System.exit(1);
                     break;
                 case E_RECOVERABLE_ERROR:
@@ -84,6 +80,12 @@ public class Out extends OutBase{
                 case E_NOTICE:
                     System.out.println(ansi().fg(Ansi.Color.CYAN).a("[NOTICE] - " + text).reset());
                     break;
+                case E_CORE_ERROR:
+                    
+                    break;
+                case E_CORE_WARNING:
+                    
+                    break;
             }
         else
             switch(type){
@@ -92,7 +94,7 @@ public class Out extends OutBase{
                     break;
                 case E_ERROR:
                     System.out.println("[ERROR FATAL] - " + text);
-                    System.out.println("La ejecución de UltraDBScript se ha detenido a causa de un error fatal");
+                    System.out.println("La ejecución de UltraDBScript ha sido detenida a causa de un error fatal");
                     System.exit(1);
                     break;
                 case E_RECOVERABLE_ERROR:

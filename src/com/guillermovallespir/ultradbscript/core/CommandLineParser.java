@@ -9,6 +9,7 @@ import com.martiansoftware.jsap.FlaggedOption;
 import com.martiansoftware.jsap.JSAP;
 import com.martiansoftware.jsap.JSAPException;
 import com.martiansoftware.jsap.JSAPResult;
+import com.martiansoftware.jsap.Switch;
 import com.martiansoftware.jsap.UnflaggedOption;
 
 /**
@@ -17,9 +18,11 @@ import com.martiansoftware.jsap.UnflaggedOption;
  */
 public class CommandLineParser {
     private JSAPResult result;
+    private String[] args;
     
     public CommandLineParser(String[] args){
         JSAP jsap = new JSAP();
+        this.args = args;
 
 
         UnflaggedOption opt_files = new UnflaggedOption("files")
@@ -38,12 +41,31 @@ public class CommandLineParser {
                 .setShortFlag('c')
                 .setUsageName("config");
         opt_configs.setHelp("Setea configuración manual a través de líneas de comando");
+        
+        FlaggedOption opt_add_server = new FlaggedOption("add_server")
+                .setAllowMultipleDeclarations(false)
+                .setList(false)
+                .setRequired(false)
+                .setLongFlag("add_server")
+                .setShortFlag(JSAP.NO_SHORTFLAG);
+        
+        Switch opt_update = new Switch("update")
+                .setLongFlag("update")
+                .setShortFlag(JSAP.NO_SHORTFLAG);
+        
+        
+        Switch opt_upgrade = new Switch("upgrade")
+                .setLongFlag("upgrade")
+                .setShortFlag(JSAP.NO_SHORTFLAG);
 
 
         // Se registran las entradas
         try {
             jsap.registerParameter(opt_configs);
             jsap.registerParameter(opt_files);
+            jsap.registerParameter(opt_update);
+            jsap.registerParameter(opt_upgrade);
+            jsap.registerParameter(opt_add_server);
         } catch (JSAPException ex) {
             System.out.println("");
         }
@@ -59,6 +81,30 @@ public class CommandLineParser {
             System.err.println(jsap.getHelp());
             System.exit(1);
         }
+    }
+    
+    public boolean isAddServer(){
+        return result.userSpecified("add_server");
+    }
+    
+    public String[] getAddServer(){
+        StringBuilder argumentos = new StringBuilder();
+        for(int i = 0; i < this.args.length; i++){
+            argumentos.append(this.args[i]);
+            argumentos.append(" ");
+        }
+        String args1 = argumentos.toString();
+        args1 = args1.substring(args1.indexOf("--add_server") + 13);
+        System.out.println(args1);
+        return args1.split(" ");
+    }
+    
+    public boolean isUpdate(){
+        return result.getBoolean("update");
+    }
+    
+    public boolean isUpgrade(){
+        return result.getBoolean("upgrade");
     }
     
     public String[] getConfigs(){

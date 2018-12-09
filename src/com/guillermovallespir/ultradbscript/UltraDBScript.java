@@ -5,6 +5,7 @@ import com.guillermovallespir.ultradbscript.Structures.Parameters;
 import com.guillermovallespir.ultradbscript.core.CommandLineParser;
 import com.guillermovallespir.ultradbscript.core.Config;
 import com.guillermovallespir.ultradbscript.core.Errors;
+import com.guillermovallespir.ultradbscript.updates.Update;
 import java.io.File;
 import java.util.Calendar;
 import out.Out;
@@ -53,9 +54,68 @@ public class UltraDBScript {
         out.Write("\t\t\t\t******************************", true);
         out.Write("Ultra DBScript (r) - Todos los derechos reservados", false);
         out.Write("Ultra DBScript corriendo sobre " + System.getProperty("os.name") + " versión " + System.getProperty("os.version") + " arquitectura " + System.getProperty("os.arch"), false);
+        
+        
+        
+        
+        
+        
+        /******************
+         * Verficación del tipo de inicio
+         */
+        if(clp.isUpdate()){
+            // El arranque de UltraDBScript es de actualización los repositorios
+            
+            // Se inicia la conexión con la base de datos
+            Update update = new Update();
+            out.Write(Out.Type.NORMAL, "", "UPDATE", "Se inicia la actualización de UltraDBScript", false);
+            out.Write(Out.Type.NORMAL, "", "UPDATE", "- Leyendo base de datos local, obteniendo paquetes instalados", true);
+            out.Write(Out.Type.NORMAL, "", "UPDATE", "- Leyendo base de datos local, obteniendo lista de servidores de actualizaciones", true);
+            out.Write(Out.Type.NORMAL, "", "UPDATE", "- Intentando conectar con los servidores de actualizaciones . . .", true);
+            update.intUpdate();
+            System.exit(0);
+        }
+        
+        if(clp.isUpgrade()){
+            // El arranque de UltraDBScript es de actualización de los paquetes
+        }
+        
+        if(clp.isAddServer()){
+            // El arranque de UltraDBScript es de agregación de repositorio de actualización
+            out.Write(Out.Type.NORMAL, "", "UPDATE", "Se agrega un nuevo repositorio UltraDBScript", false);
+            Update update = new Update();
+            clp.getAddServer();
+            System.exit(0);
+        }
+        
+        
+        
+        
+        
+        /*********************
+         * De todas maneras, aunque UltraDBScript no arranque en modo de actualización,
+         * la base de datos se actualiza en segundo plano en modo silencioso
+         */
+        Thread thread_update = new Thread(){
+            @Override
+            public void run(){
+                Update update = new Update();
+                update.setSilence(true);
+                update.intUpdate();
+            }
+        };
+        thread_update.setPriority(Thread.MIN_PRIORITY);
+        thread_update.start();
+        
+        
+        
+        
+        
         out.Write("---------------------------------------------- [ Ultra DBScript ] ----------------------------------------------", false);
         out.Write("UltraDBScript iniciando el " + Calendar.getInstance().getTime().toLocaleString().replace(" ", " a las ") + " horas", false);
         out.Write("Se inicia la lectura estructurada de los archivos XML / UDBSXML", false);
+        
+        
         
         
         // Se obtiene la lista de archivos XML / UDBSXML que serán procesados

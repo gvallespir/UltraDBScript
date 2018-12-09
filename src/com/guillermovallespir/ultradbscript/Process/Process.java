@@ -7,7 +7,6 @@ package com.guillermovallespir.ultradbscript.Process;
 
 import com.guillermovallespir.ultradbscript.core.Helper;
 import java.util.ArrayList;
-import java.util.List;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import out.Out;
