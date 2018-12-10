@@ -89,6 +89,11 @@ public class Update {
                 + "`pai_paq_fecha_version` DATETIME NOT NULL,\n"
                 + "`pai_fecha_actualizacion` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP\n"
                 + ");";
+        
+        
+        String sql_insert_server = "INSERT OR REPLACE INTO `ser_servidor`\n"
+                + "(`ser_servidor_id`, `ser_nombre`, `ser_descripcion`, `ser_url`, `ser_estado`)\n"
+                + "VALUES ('1', 'Repositorios Neogística', 'Repositorio princiapl de Neogística', 'http://200.74.119.116', '1');";
 
         
         if(conn != null){
@@ -98,6 +103,7 @@ public class Update {
                 st.execute(sql_servidores);
                 st.execute(sql_repositorios);
                 st.execute(sql_repo_instalados);
+                st.execute(sql_insert_server);
             } catch (SQLException ex) {
                 Logger.getLogger(Update.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -121,6 +127,31 @@ public class Update {
         }
         
         return num;
+    }
+    
+    public String[][] getListPackagesRequieredUpdate(){
+        String sql = "SELECT\n"
+                + "paq_paquete_id, paq_nombre, paq_descripcion, paq_version, paq_version_str, paq_fecha_version AS paq_fecha, pai_paq_version_str AS paq_version_local\n"
+                + "FROM paq_paquete\n"
+                + "INNER JOIN pai_paquete_instalado ON paq_paquete_id=pai_paq_paquete_id AND paq_version<>pai_paq_version\n"
+                + "ORDER BY paq_fecha_version";
+        
+        ArrayList<String[]> data = new ArrayList<>();
+        try {
+            Statement st = conn.createStatement();
+            ResultSet rs = st.executeQuery(sql);
+            
+            while(rs.next()){
+                data.add(new String[]{rs.getString("paq_paquete_id"), rs.getString("paq_nombre"), rs.getString("paq_version_local"), rs.getString("paq_version_str"), rs.getString("paq_fecha")});
+            }
+            
+            st.close();
+            conn.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(Update.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return (String[][]) data.toArray(new String[0][0]);
     }
     
     public void setSilence(boolean silence){
@@ -264,7 +295,11 @@ public class Update {
                 + "`paq_nombre`,\n"
                 + "`paq_version_str` AS `paq_version`,\n"
                 + "`paq_fecha_version` AS `paq_fecha`,\n"
-                + "CASE WHEN `pai_paq_paquete_id` IS NULL THEN 'No instalado' ELSE CASE WHEN paq_version > pai_paq_version THEN 'Requiere actualizar' ELSE 'Instalado' END END AS `paq_estado`\n"
+                + "CASE\n"
+                + "     WHEN `pai_paq_paquete_id` IS NULL THEN 'No instalado'\n"
+                + "     ELSE CASE WHEN paq_version > pai_paq_version THEN 'Requiere actualizar'\n"
+                + "     WHEN paq_version < pai_paq_version THEN 'Requiere vuelta atrás'\n"
+                + "     ELSE 'Instalado' END END AS `paq_estado`\n"
                 + "FROM `paq_paquete`\n"
                 + "LEFT JOIN `pai_paquete_instalado` ON `pai_paq_paquete_id`=`paq_paquete_id`\n"
                 + "ORDER BY `paq_paquete_id`;";
@@ -393,10 +428,14 @@ public class Update {
                         }
                     }
                 }
-                //f.delete();
+                f.delete();
             }
         } catch (SQLException ex) {
             Logger.getLogger(Update.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    public void upgrade(){
+        
     }
 }
