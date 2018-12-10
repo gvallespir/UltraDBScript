@@ -10,7 +10,6 @@ import com.martiansoftware.jsap.JSAPResult;
 import java.io.File;
 import java.util.Calendar;
 import java.util.Map;
-import static org.fusesource.jansi.Ansi.ansi;
 import out.Out;
 
 /**
@@ -76,6 +75,11 @@ public class UltraDBScript {
             out.Write(Out.Type.NORMAL, "", "UPDATE", "- Leyendo base de datos local, obteniendo lista de servidores de actualizaciones", true);
             out.Write(Out.Type.NORMAL, "", "UPDATE", "- Intentando conectar con los servidores de actualizaciones . . .", true);
             update.intUpdate();
+            int num = update.getPackagesRequieredUpdate();
+            if(num == 0)
+                out.Write(Out.Type.NORMAL, "", "UPDATE", "- Todos los paquetes se encuentran actualizados.", true);
+            else
+                out.Write(Out.Type.NORMAL, "", "UPDATE", "Hay " + num + " paquete(s) que puede(n) ser actualizado(s).", true);
             System.exit(0);
         }
         
