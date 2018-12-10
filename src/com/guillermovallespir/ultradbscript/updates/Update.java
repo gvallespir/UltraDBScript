@@ -104,6 +104,25 @@ public class Update {
         }
     }
     
+    public int getPackagesRequieredUpdate(){
+        String sql = "SELECT COUNT(*) AS num\n"
+                + "FROM paq_paquete\n"
+                + "INNER JOIN pai_paquete_instalado ON paq_paquete_id=pai_paq_paquete_id AND paq_version > pai_paq_version;";
+        
+        int num = 0;
+        try {
+            Statement st = conn.createStatement();
+            ResultSet rs = st.executeQuery(sql);
+            
+            rs.next();
+            num = rs.getInt("num");
+        } catch (SQLException ex) {
+            Logger.getLogger(Update.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return num;
+    }
+    
     public void setSilence(boolean silence){
         this.silence = silence;
     }
