@@ -85,6 +85,7 @@ public class UltraDBScript {
         
         if(clp.isUpgrade()){
             // El arranque de UltraDBScript es de actualización de los paquetes
+            System.exit(0);
         }
         
         if(clp.isAddServer()){
