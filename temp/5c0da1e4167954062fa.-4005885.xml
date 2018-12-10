@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-
-<PAQUETES>
-	<PAQUETE id="10" name="Query Operaciones" desc="Paquete de Querys, procedimientos y funciones del grupo de Operaciones" version="1" version_str="1.0" url="/packages/operaciones/query_operaciones/1.0/query_operaciones.zip" date="20181209" sha1="" />
-</PAQUETES>
