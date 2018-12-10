@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<DBSCRIPT desc="Actualización de PEDIDO_SKU_DESPACHO" author="" date="">
+
+<SQL db="STOCKDOWN" id="Actualiza PEDIDO_SKU_DESPACHO desde etl_pedido_sku_despacho" desc="Actualiza PEDIDO_SKU_DESPACHO desde etl_pedido_sku_despacho" ><![CDATA[
+]]></SQL>
+
+</DBSCRIPT>

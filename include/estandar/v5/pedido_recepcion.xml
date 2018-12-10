@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<DBSCRIPT desc="Actualización de PEDIDO_RECEPCION" author="" date="">
+
+<SQL db="STOCKDOWN" id="Actualiza PEDIDO_RECEPCION desde etl_pedido_recepcion" desc="Actualiza PEDIDO_RECEPCION desde etl_pedido_recepcion" ><![CDATA[
+REPLACE INTO pedido_recepcion
+(codigo_pedido, id_linea_pedido, id_recepcion, id_linea_recepcion, fecha_recepcion, cantidad_recibida)
+SELECT codigo_pedido, id_linea_pedido, id_recepcion, id_linea_recepcion, fecha_recepcion, cantidad_recibida
+FROM etl_pedido_recepcion
+GROUP BY codigo_pedido, id_linea_pedido, id_recepcion, id_linea_recepcion
+]]></SQL>
+
+</DBSCRIPT>

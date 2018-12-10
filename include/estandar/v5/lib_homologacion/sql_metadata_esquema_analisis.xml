@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<DBSCRIPT desc="Migración con homologación">
+
+<!--
+Este XML recibe un conjunto de parametros y entrega una SQL_METADATA, la cual tiene la estructura
+posicion: ordenamiento para group_concat
+campo_indice_origen: campos a incluir por PK en tabla origen
+campo_indice_destino: campos a incluir por PK en tabla destino
+definicion_columna: campos a crear en tabla
+
+Esto se usa para crear de forma dinamica una TABLA que contenga las PKs de las tablas de origen y destino
+
+El USO de este XML depende de que se tengan predefinidos parametros
+VAR_BD_CATALOGO: Catalogo del information_schema a usar
+VAR_BD_ORIGEN:  Base de datos de origen
+VAR_BD_DESTINO:  Base de datos de destino
+VAR_TABLA_ORIGEN: Tabla de origen
+VAR_TABLA_DESTINO: Tabla de destino
+-->
+<PARAM id="FILTRO_PRI" value="PRI"/>
+
+<PARAM id="SQL_METADATA" value="SELECT 
+t.posicion,t.campo_indice_origen,t.campo_indice_destino,t.definicion_columna
+FROM (
+SELECT /*Origen*/
+concat(t.table_schema,'.',t.table_name,'.',t.column_name) as id_campo
+,t.ordinal_position as posicion
+,concat(t.column_name,'_i') as campo
+,concat(t.column_name,'_i') as campo_indice_origen
+,null as campo_indice_destino
+,concat(
+cast(concat(char(96),t.column_name,'_i',char(96)) as char),
+' ',
+cast(column_type as char),
+if(isnull(character_set_name),
+   '',
+   concat(' character set ', character_set_name)),
+if(isnull(collation_name), '', concat(' collate ', collation_name)),
+' ',
+if(is_nullable = 'no', 'not null ', ''),
+if(is_nullable = 'no' and isnull(column_default),
+   '',
+   concat('default ', quote(column_default), ' ')),
+upper(extra))
+as definicion_columna
+FROM information_schema.columns t 
+WHERE 
+t.table_catalog='%VAR_BD_CATALOGO%' AND t.table_schema='%VAR_BD_ORIGEN%' AND t.table_name='%VAR_TABLA_ORIGEN%' AND t.column_key='%FILTRO_PRI%'
+
+UNION ALL
+SELECT /*DESTINO*/
+concat(t.table_schema,'.',t.table_name,'.',t.column_name) as id_campo
+,10000 + t.ordinal_position as posicion
+,concat(t.column_name,'_f') as campo
+,null as campo_indice_origen
+,concat(t.column_name,'_f') as campo_indice_destino
+,concat(
+cast(concat(char(96),t.column_name,'_f',char(96)) as char),
+' ',
+cast(column_type as char),
+if(isnull(character_set_name),
+   '',
+   concat(' character set ', character_set_name)),
+if(isnull(collation_name), '', concat(' collate ', collation_name)),
+' ',
+if(is_nullable = 'no', 'not null ', ''),
+if(is_nullable = 'no' and isnull(column_default),
+   '',
+   concat('default ', quote(column_default), ' ')),
+upper(extra))
+as definicion_columna
+FROM information_schema.columns t 
+WHERE 
+t.table_catalog='%VAR_BD_CATALOGO%' AND t.table_schema='%VAR_BD_DESTINO%' AND t.table_name='%VAR_TABLA_DESTINO%' AND t.column_key='%FILTRO_PRI%'
+
+UNION ALL
+SELECT /*Campo de control*/
+null as id_campo,20000+0 as posicion,'estado' as campo,null as campo_indice_origen,null as campo_indice_destino,concat('  `estado` int NOT NULL DEFAULT ',char(39),0,char(39)) as definicion_columna
+) t
+"/>
+
+</DBSCRIPT>

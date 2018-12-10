@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<DBSCRIPT desc="Migración con homologación">
+<!--
+Este XML recibe un conjunto de parametros y entrega una SQL_METADATA, la cual tiene la estructura
+posicion: ordenamiento para group_concat
+extra_join: joins adicionales para construir la query
+campo_insert: campos a incluir en insert
+campo_select: campos a incluir en select
+
+El USO de este XML depende de que se tengan predefinidos parametros
+VAR_BD_CATALOGO: Catalogo del information_schema a usar
+VAR_BD_ORIGEN:  Base de datos de origen
+VAR_BD_DESTINO:  Base de datos de destino
+VAR_TABLA_ORIGEN: Tabla de origen
+VAR_TABLA_DESTINO: Tabla de destino
+VAR_MAPA_HOMOLOGACION: Mapa de reglas de homologación
+-->
+
+<PARAM id="FILTRO_PRI" value="PRI"/>
+
+<PARAM id="SQL_METADATA" value="SELECT 
+t.posicion
+,CASE WHEN t.extra_join IS NULL THEN '' ELSE t.extra_join END as extra_join
+,t.campo_insert
+,CASE WHEN t.extra_join IS NULL THEN t.campo_select ELSE t.campo_homologado_select END as campo_select
+FROM (
+SELECT /*Origen*/
+concat(t.table_schema,'.',t.table_name,'.',t.column_name) AS id_campo,
+t.ordinal_position AS posicion,
+concat(t.column_name, '_i') AS campo_insert,
+concat(' t.',t.column_name,' ') as campo_select,
+null as campo_homologado_select,
+null as extra_join,
+null as regla_campo
+FROM information_schema.columns t
+WHERE t.table_catalog = '%VAR_BD_CATALOGO%' AND t.table_schema = '%VAR_BD_ORIGEN%' AND t.table_name = '%VAR_TABLA_ORIGEN%' AND t.column_key = '%FILTRO_PRI%'
+UNION ALL
+SELECT /*DESTINO*/
+concat(t.table_schema,'.',t.table_name,'.',t.column_name)
+AS id_campo,
+10000+t.ordinal_position AS posicion,
+concat(t.column_name,'_f') as campo_insert,
+concat(' t.',t.column_name,' ') as campo_select,
+concat(' ifnull( '
+,'th',t.ORDINAL_POSITION,'.codigo_interno'
+,',t.',t.column_name
+,' )') as campo_homologado_select,
+concat('LEFT JOIN etl_mapeo_codificacion th',t.ordinal_position,' ON '
+,'th',t.ordinal_position,'.tipo_mapeo=',char(39),tm.codigo_interno,char(39),'  AND '
+,'th',t.ordinal_position,'.codigo_externo=t.',t.column_name,' AND '
+,'th',t.ordinal_position,'.activo=1 '
+) as extra_join,
+tm.codigo_interno as regla_campo
+FROM information_schema.columns t
+LEFT JOIN etl_mapeo_codificacion tm ON tm.tipo_mapeo='%VAR_MAPA_HOMOLOGACION%' /*VAR_MAPA_HOMOLOGACION*/
+AND tm.codigo_externo=concat(t.table_name,'.',t.column_name) AND tm.activo=1
+WHERE t.table_catalog = '%VAR_BD_CATALOGO%' AND t.table_schema = '%VAR_BD_DESTINO%' AND t.table_name = '%VAR_TABLA_DESTINO%' AND t.column_key = '%FILTRO_PRI%'
+) t
+ORDER BY t.posicion
+"/>
+
+</DBSCRIPT>

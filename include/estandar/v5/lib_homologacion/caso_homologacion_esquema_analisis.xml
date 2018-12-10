@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<DBSCRIPT desc="Llenado ops_tabla_historico">
+
+<INCLUDE XML_FILE="../database_stockdown.xml"/>
+<!--
+Caso para crear una tabla temporal de análisis de PK entre una tabla de origen y de destino antes de homologar
+-->
+<PARAM id="VAR_BD_CATALOGO" value="def" />
+<PARAM id="VAR_BD_ORIGEN" value="sd_5_adoc_cubos_sap" />
+<PARAM id="VAR_BD_DESTINO" value="sd_5_euromotors_prod" />
+<PARAM id="VAR_TABLA_ORIGEN" value="sku_centro_proveedor" />
+<PARAM id="VAR_TABLA_DESTINO" value="sku_centro_proveedor" />
+
+<INCLUDE XML_FILE="sql_metadata_esquema_analisis.xml"/>
+
+<PARAM id="VAR_MOTOR_TABLA" value="" db="STOCKDOWN"  sqlvalue="SELECT t.engine FROM information_schema.tables t WHERE t.table_catalog='%VAR_BD_CATALOGO%' AND t.table_schema='%VAR_BD_DESTINO%' AND t.table_name='%VAR_TABLA_DESTINO%'"/>
+<PARAM id="VAR_SET_CARACTERES_TABLA" value="" db="STOCKDOWN"  sqlvalue="SELECT t2.character_set_name FROM information_schema.tables t INNER JOIN information_schema.collation_character_set_applicability t2 ON t.table_collation=t2.collation_name WHERE t.table_catalog='%VAR_BD_CATALOGO%' AND t.table_schema='%VAR_BD_DESTINO%' AND t.table_name='%VAR_TABLA_DESTINO%'"/>
+<PARAM id="VAR_BD_DESTINO" value="sd_5_euromotors_prod" />
+<PARAM id="VAR_TABLA_DESTINO" value="hanal_%VAR_TABLA_DESTINO%" />
+<PARAM id="VAR_EJECUTAR" value="1" />
+
+<INCLUDE XML_FILE="lib_homologacion_esquema_analisis.xml"/>
+</DBSCRIPT>

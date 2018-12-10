@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<DBSCRIPT desc="Importar datos desde tablas upl">
+<!--Recibe
+BDORIGEN: BD origen de la data
+BRDESTINO: BD destino de la tabla
+FILTRO_SQL: Filtro para obtener tablas del information_schema del origen
+Asume que Tablas en origen y Destino tienen la misma estructura
+-->
+
+
+<SQL id="aumenta el maximo largo de group concat" db="STOCKDOWN" desc="" enabled="1"><![CDATA[
+SET SESSION group_concat_max_len = 10000000
+]]></SQL>
+
+<ITERATION id="Obtiene tablas a migrar" token="$"  >
+<SOURCE >
+<SQL id="Obtiene tablas a migrar automaticas" db="STOCKDOWN" desc="" enabled="1"><![CDATA[
+SELECT t.table_name 
+FROM information_schema.tables t
+WHERE t.TABLE_SCHEMA='%BDORIGEN%'
+%FILTRO_SQL%
+]]></SQL>
+</SOURCE >
+<PROCESS logleve="2" >
+
+<PARAM id="CAMPOS_SELECT_SQL" value="" db="STOCKDOWN" sqlvalue="SELECT group_concat(t.column_name ORDER BY t.ORDINAL_POSITION SEPARATOR ',') FROM information_schema.columns t WHERE t.TABLE_SCHEMA='%BDORIGEN%' AND t.table_name like '$table_name$'" />
+
+<PARAM id="CAMPOS_INSERT_SQL" value="" db="STOCKDOWN" sqlvalue="SELECT group_concat(t.column_name ORDER BY t.ORDINAL_POSITION SEPARATOR ',') FROM information_schema.columns t WHERE t.TABLE_SCHEMA='%BDORIGEN%' AND t.table_name like '$table_name$'" />
+
+<SQL id="disable keys %BDESTINO%.$table_name$" db="STOCKDOWN" enabled="1" ><![CDATA[ALTER TABLE %BDESTINO%.$table_name$ DISABLE KEYS]]></SQL>
+
+<SQL id="BORRA %BDESTINO%.$table_name$" db="STOCKDOWN" desc="" enabled="1"><![CDATA[
+TRUNCATE TABLE %BDESTINO%.$table_name$
+]]></SQL>
+
+<SQL id="Llena %BDESTINO%.$table_name$ desde %BDORIGEN%.$table_name$" db="STOCKDOWN" desc="" enabled="1"><![CDATA[
+INSERT INTO %BDESTINO%.$table_name$
+(
+%CAMPOS_INSERT_SQL%
+)
+SELECT
+%CAMPOS_SELECT_SQL%
+FROM %BDORIGEN%.$table_name$
+WHERE
+%SQL_FILTRO_DATA%
+]]></SQL>
+
+<SQL id="enable keys %BDESTINO%.$table_name$" db="STOCKDOWN" enabled="1" ><![CDATA[ALTER TABLE %BDESTINO%.$table_name$ ENABLE KEYS]]></SQL>
+
+</PROCESS>
+</ITERATION>
+
+</DBSCRIPT>

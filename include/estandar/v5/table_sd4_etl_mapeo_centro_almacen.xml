@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<DBSCRIPT desc="Esquema UPL">
+
+<SQL id="drop etl_mapeo_centro_almacen" fails="0" db="STOCKDOWN" >DROP TABLE etl_mapeo_centro_almacen</SQL> 
+<CREATE_TABLE db="STOCKDOWN" name="etl_mapeo_centro_almacen" tablespace="" >
+<FIELDS>
+	<FIELD name="tipo_mapeo" type="varchar"   length="50"  nullable="0"  primary_key="1" ></FIELD>
+	<FIELD name="codigo_centro_externo" type="varchar"   length="50"  nullable="0" primary_key="1"  ></FIELD>
+	<FIELD name="codigo_almacen_externo" type="varchar"   length="50"  nullable="0"  primary_key="1" ></FIELD>
+	<FIELD name="codigo_centro" type="varchar"   length="50"  nullable="1"   ></FIELD>
+	<FIELD name="activo" type="int"   nullable="0" default="0" ></FIELD>
+	<FIELD name="actualizacion_automatica" type="int"   nullable="1"   ></FIELD>
+	<FIELD name="fecha_creacion" type="datetime"   nullable="1"   ></FIELD>
+	<FIELD name="fecha_modificacion" type="datetime"   nullable="1"   ></FIELD>
+	<FIELD name="comentario" type="varchar"   length="50"  nullable="1"   ></FIELD>
+</FIELDS>
+</CREATE_TABLE>
+<CREATE_INDEX db="STOCKDOWN" table="etl_mapeo_centro_almacen" name="idx_etl_mapeo_centro_almacen_01" fields="tipo_mapeo,codigo_centro_externo,codigo_almacen_externo,codigo_centro" tablespace="" /> 
+<CREATE_INDEX db="STOCKDOWN" table="etl_mapeo_centro_almacen" name="idx_etl_mapeo_centro_almacen_02" fields="tipo_mapeo,activo,codigo_centro" tablespace="" /> 
+<CREATE_INDEX db="STOCKDOWN" table="etl_mapeo_centro_almacen" name="idx_etl_mapeo_centro_almacen_03" fields="tipo_mapeo,codigo_centro" tablespace="" />  
+
+</DBSCRIPT>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<DBSCRIPT desc="Importar datos desde tablas upl">
+
+<SQL db="%db%" id="Limpia tabla etl_mapeo_codificacion" desc="limpia tabla etl_mapeo_codificacion"><![CDATA[
+DELETE FROM etl_mapeo_codificacion WHERE %filtro_sql%
+]]></SQL>
+
+<TXT2TABLE db="%db%" file_list="file_list_etl" date_format="%date_format%" id="insert etl_mapeo_codificacion" table="etl_mapeo_codificacion" skip_lines="%skip_lines%" delim="%delim%" mode="%mode%" standard="%standard%" enabled="1" fails="1"  >
+<CSVFIELDS>
+<CSVFIELD name="tipo_mapeo" type="string"  nullable="0"  key="1" ></CSVFIELD>
+<CSVFIELD name="codigo_externo" type="string"  nullable="0"  key="1" ></CSVFIELD>
+<CSVFIELD name="codigo_interno" type="string"  nullable="0"  key="0" ></CSVFIELD>
+<CSVFIELD name="activo" type="int"  nullable="0"  key="0" ></CSVFIELD>
+<CSVFIELD name="actualizacion_automatica" type="int"  nullable="1"  key="0" ></CSVFIELD>
+<CSVFIELD name="fecha_creacion" type="datetime"  nullable="1"  key="0" ></CSVFIELD>
+<CSVFIELD name="fecha_modificacion" type="datetime"  nullable="1"  key="0" ></CSVFIELD>
+<CSVFIELD name="comentario" type="string"  nullable="1"  key="0" ></CSVFIELD>
+</CSVFIELDS>
+</TXT2TABLE>
+
+
+</DBSCRIPT>

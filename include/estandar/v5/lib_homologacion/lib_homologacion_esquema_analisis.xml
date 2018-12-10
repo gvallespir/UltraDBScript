@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<DBSCRIPT desc="Migración con homologación">
+<!--
+Este XML debe tener predefinida una SQL_METADATA, la cual tiene la estructura
+posicion: ordenamiento para group_concat
+definicion_columna: definición de columnas para crear tabla
+campo_indice_origen: campos a incluir en indice de origen
+campo_indice_destino: campos a incluir en indice de destino
+
+Este XML recibe un conjunto de parametros 
+El USO de este XML depende de que se tengan predefinidos parametros
+VAR_BD_DESTINO:  Base de datos de destino
+VAR_TABLA_DESTINO: Tabla de destino
+VAR_EJECUTAR: Ejecutar migración
+VAR_MOTOR_TABLA: Motor de la tabla a crear
+VAR_SET_CARACTERES_TABLA: Set de caracteres de la tabla a crear
+
+En base a estro crea una tabla con la definicion de columnas y dos indices (origen / fin)
+-->
+
+
+<PARAM id="DEFINICION_COLUMNAS" value="" db="STOCKDOWN"  sqlvalue="SELECT
+group_concat(t.definicion_columna ORDER BY t.posicion SEPARATOR ' , ') as definicion_columna
+FROM (%SQL_METADATA%) t
+"/>
+
+<PARAM id="INDICE_ORIGEN" value="" db="STOCKDOWN"  sqlvalue="SELECT
+concat(', KEY idx_i_01 ( ',group_concat(t.campo_indice_origen ORDER BY t.posicion SEPARATOR ' , '), ' ) ') indice_origen
+FROM (%SQL_METADATA%) t
+"/>
+
+<PARAM id="INDICE_DESTINO" value="" db="STOCKDOWN"  sqlvalue="SELECT
+concat(', KEY idx_f_01 ( ',group_concat(t.campo_indice_destino ORDER BY t.posicion SEPARATOR ' , '), ' ) ')  indice_destino 
+FROM (%SQL_METADATA%) t
+"/>
+
+<PARAM id="SQL_DROP" value="
+DROP TABLE IF EXISTS %VAR_BD_DESTINO%.%VAR_TABLA_DESTINO%
+"/>
+
+<PARAM id="SQL_CREATE" value="
+CREATE TABLE %VAR_BD_DESTINO%.%VAR_TABLA_DESTINO%
+(
+%DEFINICION_COLUMNAS%
+%INDICE_ORIGEN%
+%INDICE_DESTINO%
+) ENGINE=%VAR_MOTOR_TABLA% DEFAULT CHARSET=%VAR_SET_CARACTERES_TABLA%;
+"/>
+
+
+<SQL db="STOCKDOWN" id="Drop %VAR_BD_DESTINO%.%VAR_TABLA_DESTINO%" enabled="%VAR_EJECUTAR%" ><![CDATA[
+%SQL_DROP%
+]]></SQL>
+
+<SQL db="STOCKDOWN" id="Create %VAR_BD_DESTINO%.%VAR_TABLA_DESTINO%" enabled="%VAR_EJECUTAR%" ><![CDATA[
+%SQL_CREATE%
+]]></SQL>
+
+</DBSCRIPT>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<DBSCRIPT desc="Actualización de SKU-centro" author="" date="">
+
+<SQL db="STOCKDOWN" id="Definición según datos ETL" desc="Definición según datos ETL" ><![CDATA[
+UPDATE sku_centro
+
+LEFT JOIN etl_sku_centro_stock_fisico zsf ON sku_centro.codigo_sku=zsf.codigo_sku AND sku_centro.codigo_centro=zsf.codigo_centro
+LEFT JOIN etl_sku_centro_stock_transito_proveedor zstp ON sku_centro.codigo_sku=zstp.codigo_sku AND sku_centro.codigo_centro=zstp.codigo_centro
+LEFT JOIN etl_sku_centro_stock_transito_interno zsti ON sku_centro.codigo_sku=zsti.codigo_sku AND sku_centro.codigo_centro=zsti.codigo_centro
+LEFT JOIN etl_sku_centro_stock_comprometido zscm ON sku_centro.codigo_sku=zscm.codigo_sku AND sku_centro.codigo_centro=zscm.codigo_centro
+LEFT JOIN etl_sku_centro_backorder zsbo ON sku_centro.codigo_sku=zsbo.codigo_sku AND sku_centro.codigo_centro=zsbo.codigo_centro
+
+LEFT JOIN etl_sku_centro_costo zcsc ON sku_centro.codigo_sku=zcsc.codigo_sku AND sku_centro.codigo_centro=zcsc.codigo_centro
+LEFT JOIN etl_sku_centro_precio_venta zpsc ON sku_centro.codigo_sku=zpsc.codigo_sku AND sku_centro.codigo_centro=zpsc.codigo_centro
+LEFT JOIN etl_sku_centro_fecha_incorporacion zfsc ON sku_centro.codigo_sku=zfsc.codigo_sku AND sku_centro.codigo_centro=zfsc.codigo_centro
+LEFT JOIN etl_sku_centro_demanda_periodo_actual zdpa ON sku_centro.codigo_sku=zdpa.codigo_sku AND sku_centro.codigo_centro=zdpa.codigo_centro
+
+LEFT JOIN etl_sku_costo zcs ON sku_centro.codigo_sku=zcs.codigo_sku
+LEFT JOIN etl_sku_precio_venta zps ON sku_centro.codigo_sku=zps.codigo_sku
+LEFT JOIN etl_sku_fecha_incorporacion zfs ON sku_centro.codigo_sku=zfs.codigo_sku
+
+SET
+ sku_centro.stock_fisico=ifnull(zsf.valor,0)
+,sku_centro.stock_transito_proveedor=ifnull(zstp.valor,0)
+,sku_centro.stock_transito_interno=ifnull(zsti.valor,0)
+,sku_centro.stock_comprometido=ifnull(zscm.valor,0)
+,sku_centro.backorder=ifnull(zsbo.valor,0)
+
+,sku_centro.costo=ifnull(ifnull(zcsc.valor,zcs.valor),sku_centro.costo)
+,sku_centro.precio_venta=ifnull(ifnull(zpsc.valor,zps.valor),sku_centro.precio_venta)
+,sku_centro.fecha_incorporacion=ifnull(ifnull(zfsc.valor,zfs.valor),sku_centro.fecha_incorporacion)
+
+,sku_centro.demanda_periodo_actual=ifnull(zdpa.valor,0)
+,sku_centro.optimizar_politica_reposicion=1
+
+]]></SQL>
+
+<!--En caso que el valor actual nulo se toma el valor desde la tabla de valores fijos, 
+En caso de la fecha de incoporación si existe definición fija se lee desde ahi-->
+<SQL db="STOCKDOWN" id="Definición según datos ETL FIJOS" desc="Definición según datos ETL FIJOS" ><![CDATA[
+UPDATE sku_centro
+
+LEFT JOIN etl_sku_centro_costo_fijo zcscf ON sku_centro.codigo_sku=zcscf.codigo_sku AND sku_centro.codigo_centro=zcscf.codigo_centro
+LEFT JOIN etl_sku_centro_precio_venta_fijo zpscf ON sku_centro.codigo_sku=zpscf.codigo_sku AND sku_centro.codigo_centro=zpscf.codigo_centro
+LEFT JOIN etl_sku_centro_fecha_incorporacion_fijo zfscf ON sku_centro.codigo_sku=zfscf.codigo_sku AND sku_centro.codigo_centro=zfscf.codigo_centro
+
+LEFT JOIN etl_sku_costo_fijo zcsf ON sku_centro.codigo_sku=zcsf.codigo_sku
+LEFT JOIN etl_sku_precio_venta_fijo zpsf ON sku_centro.codigo_sku=zpsf.codigo_sku
+LEFT JOIN etl_sku_fecha_incorporacion_fijo zfsf ON sku_centro.codigo_sku=zfsf.codigo_sku
+
+SET
+
+sku_centro.costo=case when sku_centro.costo is null then ifnull(zcscf.valor,zcsf.valor) else sku_centro.costo end
+,sku_centro.precio_venta=case when sku_centro.precio_venta is null then ifnull(zpscf.valor,zpsf.valor) else sku_centro.precio_venta end
+,sku_centro.fecha_incorporacion=
+case 
+when zfscf.valor is not null then zfscf.valor
+when zfsf.valor is not null then zfsf.valor
+else sku_centro.fecha_incorporacion end
+
+]]></SQL>
+
+</DBSCRIPT>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<DBSCRIPT desc="Esquema UPL">
+
+<SQL id="drop etl_sku_centro_precio_venta_fijo" fails="0" db="STOCKDOWN" >DROP TABLE etl_sku_centro_precio_venta_fijo</SQL>
+<CREATE_TABLE db="STOCKDOWN" id="create etl_sku_centro_precio_venta_fijo" name="etl_sku_centro_precio_venta_fijo" tablespace="" >
+<FIELDS>
+<FIELD name="codigo_sku" type="varchar" length="30" nullable="0" primary_key="1" desc="" /> 
+<FIELD name="codigo_centro" type="varchar" length="8" nullable="0" primary_key="1" desc="" ></FIELD>
+<FIELD name="valor" type="float" nullable="0" default="0" desc=""></FIELD>	
+<FIELD name="clave_ayuda" type="varchar"   length="50"  nullable="1"   ></FIELD>
+</FIELDS>
+</CREATE_TABLE>
+
+</DBSCRIPT>

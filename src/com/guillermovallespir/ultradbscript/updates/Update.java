@@ -189,7 +189,7 @@ public class Update {
         
         System.out.println("\t" + ansi().fg(Ansi.Color.YELLOW).a("[Actualizando Base de Datos] ").fg(Ansi.Color.DEFAULT).a("Se inicia la actualización de base de datos").reset());
         
-        String sql = "INSERT INTO `pai_paquete_instalado` (`pai_paquete_instalado_id`, `pai_paq_paquete_id`, `pai_paq_version`, `pai_paq_version_str`, `pai_paq_fecha_version`)\n"
+        String sql = "INSERT OR REPLACE INTO `pai_paquete_instalado` (`pai_paquete_instalado_id`, `pai_paq_paquete_id`, `pai_paq_version`, `pai_paq_version_str`, `pai_paq_fecha_version`)\n"
                 + "VALUES ('" + data.get("paquete_id") + "', '" + data.get("paquete_id") + "', '" + data.get("version") + "', '" + data.get("version_str") + "', '" + data.get("fecha") + "');";
         
         try {

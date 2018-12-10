@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<DBSCRIPT desc="Esquema UPL">
+
+<SQL id="drop etl_sku_centro_backorder_dtl" fails="0" db="STOCKDOWN" >DROP TABLE etl_sku_centro_backorder_dtl</SQL>
+<CREATE_TABLE db="STOCKDOWN" id="create etl_sku_centro_backorder_dtl" name="etl_sku_centro_backorder_dtl" tablespace="" >
+<FIELDS>
+<FIELD name="codigo_sku" type="varchar" length="30" nullable="0" desc="" /> 
+<FIELD name="codigo_centro" type="varchar" length="8" nullable="0" desc="" ></FIELD>
+<FIELD name="valor" type="float" nullable="0" default="0" desc=""></FIELD>	
+<FIELD name="tabla_origen" type="varchar" length="50" nullable="1" desc="" /> 
+<FIELD name="campo_busqueda" type="varchar" length="50" nullable="1" desc="" /> 
+<FIELD name="valor_busqueda" type="varchar" length="100" nullable="1" desc="" /> 
+<FIELD name="clave_ayuda" type="varchar"   length="50"  nullable="1"   ></FIELD>
+</FIELDS>
+</CREATE_TABLE>
+<CREATE_INDEX db="STOCKDOWN" table="etl_sku_centro_backorder_dtl" name="idx_etl_sku_centro_backorder_dtl_01" fields="codigo_sku,codigo_centro" tablespace="" /> 
+<CREATE_INDEX db="STOCKDOWN" table="etl_sku_centro_backorder_dtl" name="idx_etl_sku_centro_backorder_dtl_02" fields="tabla_origen,campo_busqueda,valor_busqueda" tablespace="" /> 
+
+</DBSCRIPT>

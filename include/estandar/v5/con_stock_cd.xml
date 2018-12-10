@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<DBSCRIPT desc="Actualización de stock CD" author="" date="">
+
+<PARAM id="DIAS_UNIDAD_DEMANDA" value="30" db="STOCKDOWN" sqlvalue="SELECT dias_unidad_demanda FROM compania" />
+
+<SQL id="Setea con_stock_cd a 1" db="STOCKDOWN" desc="Setea con_stock_cd a 1"><![CDATA[	
+	UPDATE sku_centro SET 
+	 sku_centro.con_stock_cd=1
+]]></SQL>
+
+<SQL id="Setea con_stock_cd a 1" db="STOCKDOWN" desc="Setea con_stock_cd a 0 cuando el CD no tiene stock para cabezas de series"><![CDATA[	
+	UPDATE sku_centro
+	INNER JOIN sku ON sku_centro.codigo_sku=sku.codigo_sku
+	LEFT JOIN sku_centro sc ON sku.codigo_interno=sc.codigo_sku AND sku_centro.codigo_centro_origen=sc.codigo_centro
+	LEFT JOIN pronostico_demanda pd ON sc.codigo_sku=pd.codigo_sku AND sc.codigo_centro=pd.codigo_centro
+	SET
+	 sku_centro.con_stock_cd=
+     (case when ifnull(sc.stock_fisico_eq,0)>0 then
+           case when ifnull(pd.nivel,0)>0 then (sc.stock_fisico_eq/(pd.nivel/%DIAS_UNIDAD_DEMANDA%))>%DIASTOCD% else 1 end
+      else 0 end)
+]]></SQL>
+
+</DBSCRIPT>

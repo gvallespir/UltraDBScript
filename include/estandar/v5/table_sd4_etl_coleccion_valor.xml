@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<DBSCRIPT desc="Esquema UPL">
+
+<SQL id="drop etl_coleccion_valor" fails="0" db="STOCKDOWN" >DROP TABLE etl_coleccion_valor</SQL> 
+<CREATE_TABLE db="STOCKDOWN" name="etl_coleccion_valor" tablespace="" >
+<FIELDS>
+	<FIELD name="tipo_coleccion" type="varchar"   length="50"  nullable="0"   ></FIELD>
+	<FIELD name="codigo_coleccion" type="varchar"   length="50"  nullable="0"   ></FIELD>
+	<FIELD name="valor" type="varchar"   length="50"  nullable="0"   ></FIELD>
+	<FIELD name="activo" type="int"   nullable="0" default="0"  ></FIELD>
+	<FIELD name="fecha_creacion" type="datetime"   nullable="1"   ></FIELD>
+	<FIELD name="fecha_modificacion" type="datetime"   nullable="1"   ></FIELD>
+	<FIELD name="valor_unico" type="int"   nullable="0" default="0"  ></FIELD>
+	<FIELD name="excluir_comillas" type="int"   nullable="0" default="0"  ></FIELD>
+</FIELDS>
+</CREATE_TABLE>
+<PRIMARY_KEY  db="STOCKDOWN" table="etl_coleccion_valor" name="pk_etl_coleccion_valor" fields="tipo_coleccion,codigo_coleccion,valor" tablespace="" ></PRIMARY_KEY>
+
+</DBSCRIPT>

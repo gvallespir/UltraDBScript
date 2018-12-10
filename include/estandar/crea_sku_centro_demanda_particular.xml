@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<DBSCRIPT desc="Creacion SKU-centro desde demanda particular" author="" date="">
+
+<!--Crea SKU_CENTRO desde registros en demanda, lo hace solo para el centro registrado en la demanda.
+	
+	Toma un registro de demanda y busca el codigo_interno de su sku. A partir de este saca todos los sku que contengan el mismo codigo_interno.
+	Esto es, rescata toda la cadena de reemplazo del SKU. A todos estos los crea como sku_centro, asignandoles como codigo_centro el dato encontrado para este campo en demanda.
+-->
+<SQL db="STOCKDOWN" id="crea sku_centro desde demanda particular" desc="crea sku_centro desde demanda segun su centro"  enable="1"><![CDATA[
+
+INSERT INTO sku_centro
+(codigo_sku,codigo_centro)
+SELECT z2.codigo_sku,z2.codigo_centro
+FROM
+(
+SELECT s2.codigo_sku,d.codigo_centro
+FROM demanda d, sku s, sku s2
+WHERE d.codigo_sku=s.codigo_sku
+AND s.codigo_interno=s2.codigo_interno
+GROUP BY s2.codigo_sku,d.codigo_centro
+) z2 LEFT JOIN sku_centro sc
+ON z2.codigo_sku=sc.codigo_sku
+AND z2.codigo_centro=sc.codigo_centro
+WHERE sc.codigo_sku is null
+
+]]></SQL>
+
+</DBSCRIPT>

@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<DBSCRIPT desc="Creacion SKU-centro" author="" date="">
+
+<SQL db="STOCKDOWN" id="Optimiza tablas" desc="Optimiza tablas" ><![CDATA[
+OPTIMIZE TABLE sku, sku_centro, demanda, centro
+]]></SQL>
+
+<SQL db="STOCKDOWN" id="Crea sku_centro desde etl_sku_centro_creacion" desc="Crea sku_centro desde etl_sku_centro_creacion" ><![CDATA[
+
+INSERT INTO sku_centro
+(codigo_sku,codigo_centro)
+SELECT z2.codigo_sku,z2.codigo_centro
+FROM
+(
+SELECT sc.codigo_sku,sc.codigo_centro
+FROM etl_sku_centro_creacion sc
+) z2 LEFT JOIN sku_centro sc
+ON z2.codigo_sku=sc.codigo_sku
+AND z2.codigo_centro=sc.codigo_centro
+WHERE sc.codigo_sku is null
+
+]]></SQL>
+
+<SQL db="STOCKDOWN" id="Crea sku_centro desde demanda" desc="Crea sku_centro desde demanda" ><![CDATA[
+
+INSERT INTO sku_centro
+(codigo_sku,codigo_centro)
+SELECT z2.codigo_sku,z2.codigo_centro
+FROM
+(
+SELECT DISTINCT z1.codigo_sku,c.codigo_centro FROM
+(
+SELECT s2.codigo_sku,d.codigo_centro
+FROM demanda d, sku s, sku s2
+,compania co
+WHERE d.codigo_sku=s.codigo_sku
+AND s.codigo_interno=s2.codigo_interno
+AND d.fecha>=date_add(co.fecha_ultima_demanda,INTERVAL -59 MONTH)
+GROUP BY s2.codigo_sku,d.codigo_centro
+) z1, centro c WHERE z1.codigo_centro=c.codigo_centro
+) z2 LEFT JOIN sku_centro sc
+ON z2.codigo_sku=sc.codigo_sku
+AND z2.codigo_centro=sc.codigo_centro
+WHERE sc.codigo_sku is null
+
+]]></SQL>
+
+<SQL db="STOCKDOWN" id="Crea sku_centro desde demanda en Origen" desc="Crea sku_centro desde demanda en Origen" ><![CDATA[
+
+INSERT INTO sku_centro
+(codigo_sku,codigo_centro)
+
+SELECT z2.codigo_sku,z2.codigo_centro
+FROM
+(
+SELECT DISTINCT z1.codigo_sku,z1.codigo_centro FROM
+(
+SELECT s2.codigo_sku,sc1.codigo_centro_origen as codigo_centro
+FROM demanda d, sku s, sku s2
+,compania co
+,sku_centro sc1
+WHERE d.codigo_sku=s.codigo_sku
+AND s.codigo_interno=s2.codigo_interno
+AND d.fecha>=date_add(co.fecha_ultima_demanda,INTERVAL -59 MONTH)
+AND sc1.codigo_sku=d.codigo_sku AND sc1.codigo_centro=d.codigo_centro AND sc1.codigo_centro_origen is not null
+GROUP BY s2.codigo_sku,sc1.codigo_centro_origen
+) z1, centro c
+WHERE z1.codigo_centro=c.codigo_centro
+) z2 LEFT JOIN sku_centro sc
+ON z2.codigo_sku=sc.codigo_sku
+AND z2.codigo_centro=sc.codigo_centro
+WHERE sc.codigo_sku is null
+
+]]></SQL>
+
+<SQL db="STOCKDOWN" id="Crea sku_centro desde demanda_dia" desc="Crea sku_centro desde demanda_dia" ><![CDATA[
+
+INSERT INTO sku_centro
+(codigo_sku,codigo_centro)
+SELECT z2.codigo_sku,z2.codigo_centro
+FROM
+(
+SELECT z1.codigo_sku,c.codigo_centro FROM
+(
+SELECT s2.codigo_sku,d.codigo_centro
+FROM demanda_dia d, sku s, sku s2
+,compania co
+WHERE d.codigo_sku=s.codigo_sku
+AND s.codigo_interno=s2.codigo_interno
+AND d.fecha>=date_add(co.fecha_ultima_demanda,INTERVAL -59 MONTH)
+GROUP BY s2.codigo_sku,d.codigo_centro
+) z1, centro c WHERE z1.codigo_centro=c.codigo_centro
+) z2 LEFT JOIN sku_centro sc
+ON z2.codigo_sku=sc.codigo_sku
+AND z2.codigo_centro=sc.codigo_centro
+WHERE sc.codigo_sku is null
+
+]]></SQL>
+
+<SQL db="STOCKDOWN" id="Crea sku_centro desde demanda_dia en Origen" desc="Crea sku_centro desde demanda_dia en Origen" ><![CDATA[
+
+INSERT INTO sku_centro
+(codigo_sku,codigo_centro)
+
+SELECT z2.codigo_sku,z2.codigo_centro
+FROM
+(
+SELECT DISTINCT z1.codigo_sku,z1.codigo_centro FROM
+(
+SELECT s2.codigo_sku,sc1.codigo_centro_origen as codigo_centro
+FROM demanda_dia d, sku s, sku s2
+,compania co
+,sku_centro sc1
+WHERE d.codigo_sku=s.codigo_sku
+AND s.codigo_interno=s2.codigo_interno
+AND d.fecha>=date_add(co.fecha_ultima_demanda,INTERVAL -59 MONTH)
+AND sc1.codigo_sku=d.codigo_sku AND sc1.codigo_centro=d.codigo_centro AND sc1.codigo_centro_origen is not null
+GROUP BY s2.codigo_sku,sc1.codigo_centro_origen
+) z1, centro c
+WHERE z1.codigo_centro=c.codigo_centro
+) z2 LEFT JOIN sku_centro sc
+ON z2.codigo_sku=sc.codigo_sku
+AND z2.codigo_centro=sc.codigo_centro
+WHERE sc.codigo_sku is null
+
+]]></SQL>
+
+<SQL db="STOCKDOWN" id="Crea sku_centro desde etl_sku_centro_stock_fisico" desc="Crea sku_centro desde etl_sku_centro_stock_fisico" ><![CDATA[
+
+INSERT INTO sku_centro
+(codigo_sku,codigo_centro)
+
+SELECT z2.codigo_sku,z2.codigo_centro
+FROM
+(
+SELECT z1.codigo_sku,c.codigo_centro FROM
+(
+SELECT s2.codigo_sku,st.codigo_centro
+FROM etl_sku_centro_stock_fisico st, sku s, sku s2
+WHERE st.codigo_sku=s.codigo_sku
+AND s.codigo_interno=s2.codigo_interno
+GROUP BY s2.codigo_sku,st.codigo_centro
+) z1, centro c WHERE z1.codigo_centro=c.codigo_centro
+) z2 LEFT JOIN sku_centro sc
+ON z2.codigo_sku=sc.codigo_sku
+AND z2.codigo_centro=sc.codigo_centro
+WHERE sc.codigo_sku is null
+
+]]></SQL>
+
+<SQL db="STOCKDOWN" id="Crea sku_centro desde etl_sku_centro_stock_fisico en Origen" desc="Crea sku_centro desde etl_sku_centro_stock_fisico en Origen" ><![CDATA[
+
+INSERT INTO sku_centro
+(codigo_sku,codigo_centro)
+
+SELECT z2.codigo_sku,z2.codigo_centro
+FROM
+(
+SELECT DISTINCT z1.codigo_sku,z1.codigo_centro FROM
+(
+SELECT s2.codigo_sku,sc1.codigo_centro_origen as codigo_centro
+FROM etl_sku_centro_stock_fisico st, sku s, sku s2
+,sku_centro sc1
+WHERE st.codigo_sku=s.codigo_sku
+AND s.codigo_interno=s2.codigo_interno
+AND sc1.codigo_sku=st.codigo_sku AND sc1.codigo_centro=st.codigo_centro AND sc1.codigo_centro_origen is not null
+GROUP BY s2.codigo_sku,sc1.codigo_centro_origen
+) z1
+) z2 LEFT JOIN sku_centro sc
+ON z2.codigo_sku=sc.codigo_sku
+AND z2.codigo_centro=sc.codigo_centro
+WHERE sc.codigo_sku is null
+
+]]></SQL>
+
+<SQL db="STOCKDOWN" id="Crea sku_centro desde etl_sku_centro_stock_transito_proveedor" desc="Crea sku_centro desde etl_sku_centro_stock_transito_proveedor" ><![CDATA[
+INSERT INTO sku_centro
+(codigo_sku,codigo_centro)
+
+SELECT z2.codigo_sku,z2.codigo_centro
+FROM
+(
+SELECT z1.codigo_sku,c.codigo_centro FROM
+(
+SELECT s2.codigo_sku,st.codigo_centro
+FROM etl_sku_centro_stock_transito_proveedor st, sku s, sku s2
+WHERE st.codigo_sku=s.codigo_sku
+AND s.codigo_interno=s2.codigo_interno
+GROUP BY s2.codigo_sku,st.codigo_centro
+) z1, centro c WHERE z1.codigo_centro=c.codigo_centro
+) z2 LEFT JOIN sku_centro sc
+ON z2.codigo_sku=sc.codigo_sku
+AND z2.codigo_centro=sc.codigo_centro
+WHERE sc.codigo_sku is null
+]]></SQL>
+
+<SQL db="STOCKDOWN" id="Crea sku_centro desde etl_sku_centro_stock_transito_proveedor en Origen" desc="Crea sku_centro desde etl_sku_centro_stock_transito_proveedor en Origen" ><![CDATA[
+INSERT INTO sku_centro
+(codigo_sku,codigo_centro)
+SELECT z2.codigo_sku,z2.codigo_centro
+FROM
+(
+SELECT DISTINCT z1.codigo_sku,z1.codigo_centro FROM
+(
+SELECT s2.codigo_sku,sc1.codigo_centro_origen as codigo_centro
+FROM etl_sku_centro_stock_transito_proveedor st, sku s, sku s2
+,sku_centro sc1
+WHERE st.codigo_sku=s.codigo_sku
+AND s.codigo_interno=s2.codigo_interno
+AND sc1.codigo_sku=st.codigo_sku AND sc1.codigo_centro=st.codigo_centro AND sc1.codigo_centro_origen is not null
+GROUP BY s2.codigo_sku,sc1.codigo_centro_origen
+) z1
+) z2 LEFT JOIN sku_centro sc
+ON z2.codigo_sku=sc.codigo_sku
+AND z2.codigo_centro=sc.codigo_centro
+WHERE sc.codigo_sku is null
+]]></SQL>
+
+<SQL db="STOCKDOWN" id="crea sku_centro desde etl_sku_centro_stock_transito_interno" desc="crea sku_centro desde etl_sku_centro_stock_transito_interno" ><![CDATA[
+INSERT INTO sku_centro
+(codigo_sku,codigo_centro)
+SELECT z2.codigo_sku,z2.codigo_centro
+FROM
+(
+SELECT z1.codigo_sku,c.codigo_centro FROM
+(
+SELECT s2.codigo_sku,st.codigo_centro
+FROM etl_sku_centro_stock_transito_interno st, sku s, sku s2
+WHERE st.codigo_sku=s.codigo_sku
+AND s.codigo_interno=s2.codigo_interno
+GROUP BY s2.codigo_sku,st.codigo_centro
+) z1, centro c WHERE z1.codigo_centro=c.codigo_centro
+) z2 LEFT JOIN sku_centro sc
+ON z2.codigo_sku=sc.codigo_sku
+AND z2.codigo_centro=sc.codigo_centro
+WHERE sc.codigo_sku is null
+]]></SQL>
+
+<SQL db="STOCKDOWN" id="crea sku_centro desde etl_sku_centro_stock_transito_interno en Origen" desc="crea sku_centro desde etl_sku_centro_stock_transito_interno en Origen" ><![CDATA[
+INSERT INTO sku_centro
+(codigo_sku,codigo_centro)
+SELECT z2.codigo_sku,z2.codigo_centro
+FROM
+(
+SELECT DISTINCT z1.codigo_sku,z1.codigo_centro FROM
+(
+SELECT s2.codigo_sku,sc1.codigo_centro_origen as codigo_centro
+FROM etl_sku_centro_stock_transito_interno st, sku s, sku s2
+,sku_centro sc1
+WHERE st.codigo_sku=s.codigo_sku
+AND s.codigo_interno=s2.codigo_interno
+AND sc1.codigo_sku=st.codigo_sku AND sc1.codigo_centro=st.codigo_centro AND sc1.codigo_centro_origen is not null
+GROUP BY s2.codigo_sku,sc1.codigo_centro_origen
+) z1
+) z2 LEFT JOIN sku_centro sc
+ON z2.codigo_sku=sc.codigo_sku
+AND z2.codigo_centro=sc.codigo_centro
+WHERE sc.codigo_sku is null
+]]></SQL>
+
+<SQL db="STOCKDOWN" id="crea sku_centro desde etl_sku_centro_backorder" desc="crea sku_centro desde etl_sku_centro_backorder" ><![CDATA[
+INSERT INTO sku_centro
+(codigo_sku,codigo_centro)
+SELECT z2.codigo_sku,z2.codigo_centro
+FROM
+(
+SELECT z1.codigo_sku,c.codigo_centro FROM
+(
+SELECT s2.codigo_sku,st.codigo_centro
+FROM etl_sku_centro_backorder st, sku s, sku s2
+WHERE st.codigo_sku=s.codigo_sku
+AND s.codigo_interno=s2.codigo_interno
+GROUP BY s2.codigo_sku,st.codigo_centro
+) z1, centro c WHERE z1.codigo_centro=c.codigo_centro
+) z2 LEFT JOIN sku_centro sc
+ON z2.codigo_sku=sc.codigo_sku
+AND z2.codigo_centro=sc.codigo_centro
+WHERE sc.codigo_sku is null
+]]></SQL>
+
+<SQL db="STOCKDOWN" id="crea sku_centro desde etl_sku_centro_backorder en Origen" desc="crea sku_centro desde etl_sku_centro_backorder en Origen" ><![CDATA[
+INSERT INTO sku_centro
+(codigo_sku,codigo_centro)
+SELECT z2.codigo_sku,z2.codigo_centro
+FROM
+(
+SELECT DISTINCT z1.codigo_sku,z1.codigo_centro FROM
+(
+SELECT s2.codigo_sku,sc1.codigo_centro_origen as codigo_centro
+FROM etl_sku_centro_backorder st, sku s, sku s2
+,sku_centro sc1
+WHERE st.codigo_sku=s.codigo_sku
+AND s.codigo_interno=s2.codigo_interno
+AND sc1.codigo_sku=st.codigo_sku AND sc1.codigo_centro=st.codigo_centro AND sc1.codigo_centro_origen is not null
+GROUP BY s2.codigo_sku,sc1.codigo_centro_origen
+) z1
+) z2 LEFT JOIN sku_centro sc
+ON z2.codigo_sku=sc.codigo_sku
+AND z2.codigo_centro=sc.codigo_centro
+WHERE sc.codigo_sku is null
+]]></SQL>
+
+<SQL db="STOCKDOWN" id="crea sku_centro desde etl_sku_centro_stock_comprometido" desc="crea sku_centro desde etl_sku_centro_stock_comprometido" ><![CDATA[
+INSERT INTO sku_centro
+(codigo_sku,codigo_centro)
+SELECT z2.codigo_sku,z2.codigo_centro
+FROM
+(
+SELECT z1.codigo_sku,c.codigo_centro FROM
+(
+SELECT s2.codigo_sku,st.codigo_centro
+FROM etl_sku_centro_stock_comprometido st, sku s, sku s2
+WHERE st.codigo_sku=s.codigo_sku
+AND s.codigo_interno=s2.codigo_interno
+GROUP BY s2.codigo_sku,st.codigo_centro
+) z1, centro c WHERE z1.codigo_centro=c.codigo_centro
+) z2 LEFT JOIN sku_centro sc
+ON z2.codigo_sku=sc.codigo_sku
+AND z2.codigo_centro=sc.codigo_centro
+WHERE sc.codigo_sku is null
+]]></SQL>
+
+<SQL db="STOCKDOWN" id="crea sku_centro desde etl_sku_centro_stock_comprometido en Origen" desc="crea sku_centro desde etl_sku_centro_stock_comprometido en Origen" ><![CDATA[
+INSERT INTO sku_centro
+(codigo_sku,codigo_centro)
+SELECT z2.codigo_sku,z2.codigo_centro
+FROM
+(
+SELECT DISTINCT z1.codigo_sku,z1.codigo_centro FROM
+(
+SELECT s2.codigo_sku,sc1.codigo_centro_origen as codigo_centro
+FROM etl_sku_centro_stock_comprometido st, sku s, sku s2
+,sku_centro sc1
+WHERE st.codigo_sku=s.codigo_sku
+AND s.codigo_interno=s2.codigo_interno
+AND sc1.codigo_sku=st.codigo_sku AND sc1.codigo_centro=st.codigo_centro AND sc1.codigo_centro_origen is not null
+GROUP BY s2.codigo_sku,sc1.codigo_centro_origen
+) z1
+) z2 LEFT JOIN sku_centro sc
+ON z2.codigo_sku=sc.codigo_sku
+AND z2.codigo_centro=sc.codigo_centro
+WHERE sc.codigo_sku is null
+]]></SQL>
+
+<SQL db="STOCKDOWN" id="crea sku_centro por reemplazos" desc="crea sku_centro por reemplazos" ><![CDATA[
+
+INSERT INTO sku_centro
+(codigo_sku,codigo_centro)
+SELECT DISTINCT z.codigo_sku,z.codigo_centro FROM (
+SELECT s2.codigo_sku,sc.codigo_centro
+FROM sku s, sku s2, sku_centro sc
+WHERE sc.codigo_sku=s.codigo_sku AND s.codigo_interno=s2.codigo_interno
+) z
+LEFT JOIN sku_centro sc ON z.codigo_sku=sc.codigo_sku AND z.codigo_centro=sc.codigo_centro
+WHERE sc.codigo_sku is null
+
+]]></SQL>
+
+<SQL db="STOCKDOWN" id="Borra SKU_CENTRO ausentes en SKU " desc="Borra SKU_CENTRO ausentes en SKU" ><![CDATA[
+
+DELETE sku_centro
+FROM sku_centro LEFT JOIN sku
+ON sku_centro.codigo_sku=sku.codigo_sku
+WHERE sku.codigo_sku is null
+
+]]></SQL>
+
+<SQL db="STOCKDOWN" id="Borra SKU_CENTRO ausentes en CENTRO " desc="Borra SKU_CENTRO ausentes en CENTRO" ><![CDATA[
+
+DELETE sku_centro
+FROM sku_centro LEFT JOIN centro
+ON sku_centro.codigo_centro=centro.codigo_centro
+WHERE centro.codigo_centro is null
+
+]]></SQL>
+
+</DBSCRIPT>
