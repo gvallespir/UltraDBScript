@@ -8,6 +8,7 @@ package out;
 import com.bethecoder.ascii_table.ASCIITable;
 import com.guillermovallespir.ultradbscript.core.Config;
 import java.util.ArrayList;
+import java.util.Scanner;
 import org.fusesource.jansi.Ansi;
 import static org.fusesource.jansi.Ansi.ansi;
 
@@ -35,6 +36,18 @@ public class Out extends OutBase{
         E_USER_NOTICE,
         E_DEPRECATED,
         E_USER_DEPRECATED
+    }
+    
+    public int inInt(String text){
+        Scanner scanner = new Scanner(System.in);
+        System.out.print(text);
+        return scanner.nextInt();
+    }
+    
+    public String inString(String text){
+        Scanner scanner = new Scanner(System.in);
+        System.out.print(text);
+        return scanner.next();
     }
     
     public Out(Config config) {

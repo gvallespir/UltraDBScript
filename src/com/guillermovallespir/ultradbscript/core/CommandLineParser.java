@@ -53,6 +53,9 @@ public class CommandLineParser {
         
          Switch opt_list_servers = new Switch("list-servers")
                 .setLongFlag("list-servers");
+         
+         Switch opt_repo_cache = new Switch("repo-cache")
+                 .setLongFlag("repo-cache");
         
         Switch opt_update = new Switch("update")
                 .setLongFlag("update")
@@ -62,6 +65,15 @@ public class CommandLineParser {
         Switch opt_upgrade = new Switch("upgrade")
                 .setLongFlag("upgrade")
                 .setShortFlag(JSAP.NO_SHORTFLAG);
+        
+        FlaggedOption opt_install = new FlaggedOption("install")
+                .setAllowMultipleDeclarations(false)
+                .setList(true)
+                .setRequired(false)
+                .setListSeparator(' ')
+                .setLongFlag("install")
+                .setShortFlag(JSAP.NO_SHORTFLAG);
+                
 
 
         // Se registran las entradas
@@ -72,6 +84,8 @@ public class CommandLineParser {
             jsap.registerParameter(opt_upgrade);
             jsap.registerParameter(opt_add_servers);
             jsap.registerParameter(opt_list_servers);
+            jsap.registerParameter(opt_repo_cache);
+            jsap.registerParameter(opt_install);
         } catch (JSAPException ex) {
             System.out.println("");
         }
@@ -87,6 +101,18 @@ public class CommandLineParser {
                 System.err.println(jsap.getHelp());
                 System.exit(1);
         }
+    }
+    
+    public boolean isInstall(){
+        return result.userSpecified("install");
+    }
+    
+    public String[] getInstallList(){
+        return result.getStringArray("install");
+    }
+    
+    public boolean isRepoCache(){
+        return result.userSpecified("repo-cache");
     }
     
     public boolean isListServers(){

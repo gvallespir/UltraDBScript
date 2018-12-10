@@ -91,6 +91,7 @@
 			('operaciones', 'leadtime', '1'),
 			('operaciones', 'leadtime', '2'),
 			('operaciones', 'leadtime', '3'),
+			('operaciones', 'otro más', '0')
 	]]></SQL>
 
 </UltraDBScript>

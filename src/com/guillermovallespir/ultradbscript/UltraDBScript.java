@@ -9,6 +9,8 @@ import com.guillermovallespir.ultradbscript.updates.Update;
 import com.martiansoftware.jsap.JSAPResult;
 import java.io.File;
 import java.util.Calendar;
+import java.util.Map;
+import static org.fusesource.jansi.Ansi.ansi;
 import out.Out;
 
 /**
@@ -99,6 +101,34 @@ public class UltraDBScript {
             out.Write(Out.Type.NORMAL, "", "UPDATE", "Se listan los repositorios de UltraDBScript", false);
             Update update = new Update();
             out.WriteTable(new String[]{"ID", "Nombre", "URL", "Estado"}, update.getListServers());
+            System.exit(0);
+        }
+        
+        if(clp.isRepoCache()){
+            // El arranque de UltraDBScript muestra el cache de repositorios
+            out.Write(Out.Type.NORMAL, "", "UPDATE", "Se lista el caché con los paquetes en cache (no necesariamente instalados)", false);
+            Update update = new Update();
+            out.WriteTable(new String[]{"ID", "Nombre", "Versión", "Fecha", "Estado"}, update.getListRepos());
+            System.exit(0);
+        }
+        
+        if(clp.isInstall()){
+            // El arranque de UltraDBScript muestra el cache de repositorios
+            out.Write(Out.Type.NORMAL, "", "UPDATE", "Se instalará un nuevo paquete en UltraDBScript", false);
+            Update update = new Update();
+            String[] installList = clp.getInstallList();
+            for(int i = 0; i < installList.length; i++){
+                out.Write(Out.Type.NORMAL, "", "UPDATE", "Buscando paquete `" + installList[i] + "´ en la cache de repositorios", false);
+                Map<String,String> data = update.getRepoInfo(installList[i]);
+                out.Write(Out.Type.NORMAL, "", "UPDATE", "Se encontró el paquete `" + data.get("nombre") + "´ versión " + data.get("version_str") + " con id " + installList[i], false);
+                String user_opt = out.inString("¿Estás seguro que quieres instalar este paquete? [S/n]$ ");
+                if(user_opt.matches("[S|s|Y|y]")){
+                    update.install(data);
+                }else{
+                    out.Write(Out.Type.NORMAL, "", "UPDATE", "Ha sido cancelada la instalación del paquete " + data.get("nombre") + " v" + data.get("version_str"), false);
+                }
+            }
+            
             System.exit(0);
         }
         
