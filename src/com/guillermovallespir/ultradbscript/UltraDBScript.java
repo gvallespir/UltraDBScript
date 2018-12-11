@@ -75,6 +75,7 @@ public class UltraDBScript {
             out.Write(Out.Type.NORMAL, "", "UPDATE", "- Leyendo base de datos local, obteniendo lista de servidores de actualizaciones", true);
             out.Write(Out.Type.NORMAL, "", "UPDATE", "- Intentando conectar con los servidores de actualizaciones . . .", true);
             update.intUpdate();
+            out.Write(Out.Type.NORMAL, "", "UPDATE", "- La base de datos de repositorios ha sido actualizada.", true);
             int num = update.getPackagesRequieredUpdate();
             if(num == 0)
                 out.Write(Out.Type.NORMAL, "", "UPDATE", "- Todos los paquetes se encuentran actualizados.", true);
@@ -85,6 +86,18 @@ public class UltraDBScript {
         
         if(clp.isUpgrade()){
             // El arranque de UltraDBScript es de actualización de los paquetes
+            out.Write(Out.Type.NORMAL, "", "UPDATE", "Se inicia la actualización de paquetes UltraDBScript", false);
+            out.Write(Out.Type.NORMAL, "", "UPDATE", "- Leyendo base de datos local, obteniendo paquetes instalados", true);
+            Update update = new Update();
+            int num = update.getPackagesRequieredUpdate();
+            
+            if(num == 0){
+                out.Write(Out.Type.NORMAL, "", "UPDATE", "Todos los paquetes se encuentran actualizados a su última versión. No hay nada que actualizar", true);
+            }else if(num > 0){
+                out.Write(Out.Type.NORMAL, "", "UPDATE", "Se van a actualizar los siguientes paquetes UltraDBScript", true);
+                out.WriteTable(new String[]{"ID", "Nombre", "Versión local", "Versión remota", "Fecha"}, update.getListPackagesRequieredUpdate());
+                out.inString("¿Estás seguro que quieres actualizar estos paquetes? [S/n]$ ");
+            }
             System.exit(0);
         }
         
@@ -105,7 +118,12 @@ public class UltraDBScript {
             // El arranque de UltraDBScript es de agregación de repositorio de actualización
             out.Write(Out.Type.NORMAL, "", "UPDATE", "Se listan los repositorios de UltraDBScript", false);
             Update update = new Update();
-            out.WriteTable(new String[]{"ID", "Nombre", "URL", "Estado"}, update.getListServers());
+            String[][] data = update.getListServers();
+            
+            if(data.length > 0)
+                out.WriteTable(new String[]{"ID", "Nombre", "URL", "Estado"}, data);
+            else
+                out.Write(Out.Type.NORMAL, "", "UPDATE", "No hay repositorios en la base de datos. Ejecuta --update para actualizar.", false);
             System.exit(0);
         }
         
@@ -113,7 +131,11 @@ public class UltraDBScript {
             // El arranque de UltraDBScript muestra el cache de repositorios
             out.Write(Out.Type.NORMAL, "", "UPDATE", "Se lista el caché con los paquetes en cache (no necesariamente instalados)", false);
             Update update = new Update();
-            out.WriteTable(new String[]{"ID", "Nombre", "Versión", "Fecha", "Estado"}, update.getListRepos());
+            String[][] data = update.getListRepos();
+            if(data.length > 0)
+                out.WriteTable(new String[]{"ID", "Nombre", "Versión", "Fecha", "Estado"}, data);
+            else
+                out.Write(Out.Type.NORMAL, "", "UPDATE", "No hay repositorios en la base de datos. Ejecuta --update para actualizar la lista de repositorios.", false);
             System.exit(0);
         }
         
@@ -129,6 +151,7 @@ public class UltraDBScript {
                 String user_opt = out.inString("¿Estás seguro que quieres instalar este paquete? [S/n]$ ");
                 if(user_opt.matches("[S|s|Y|y]")){
                     update.install(data);
+                    out.Write(Out.Type.NORMAL, "", "UPDATE", "El paquete `" + data.get("nombre") + " v" + data.get("version_str") + "´ ha sido instalado con éxito", false);
                 }else{
                     out.Write(Out.Type.NORMAL, "", "UPDATE", "Ha sido cancelada la instalación del paquete " + data.get("nombre") + " v" + data.get("version_str"), false);
                 }

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<UltraDBScript desc="Creación de usuarios en dominio" author="GVW" date="20181206">
+	<INCLUDE id="DATABASE" system="DEFAULT_DATABASE" />
+
+	<SQL db="DATABASE"><![CDATA[
+		INSERT INTO
+			tipo_usuario
+				(codigo_tipo_usuario, descripcion, codigo_menu, pagina_inicial, permitir_todos_objetos, permitir_todos_procesos, recibir_notificaciones)
+		VALUES
+			('operaciones', 'Operaciones', NULL, '1_proceso.php?prox=1', '0', '1', '0');
+	]]></SQL>
+
+
+	<SQL db="DATABASE"><![CDATA[
+		INSERT INTO
+			tipo_usuario_objeto
+				(codigo_tipo_usuario, codigo_objeto, numero_operacion)
+		VALUES
+			('operaciones', 'agrupacion', '0'),
+			('operaciones', 'ajuste_demanda', '0'),
+			('operaciones', 'ajuste_pedido', '0'),
+			('operaciones', 'alerta', '0'),
+			('operaciones', 'arbol_inventario', '0'),
+			('operaciones', 'archivo', '0'),
+			('operaciones', 'archivo', '1'),
+			('operaciones', 'archivo', '2'),
+			('operaciones', 'archivo', '3'),
+			('operaciones', 'archivos_sistema', '0'),
+			('operaciones', 'archivos_sistema', '1'),
+			('operaciones', 'archivos_sistema', '2'),
+			('operaciones', 'archivos_sistema', '3'),
+			('operaciones', 'archivos_sugerido', '0'),
+			('operaciones', 'archivos_sugerido', '1'),
+			('operaciones', 'archivos_sugerido', '2'),
+			('operaciones', 'archivos_sugerido', '3'),
+			('operaciones', 'archivos_usuario', '0'),
+			('operaciones', 'archivos_usuario', '1'),
+			('operaciones', 'archivos_usuario', '2'),
+			('operaciones', 'archivos_usuario', '3'),
+			('operaciones', 'bitacora', '0'),
+			('operaciones', 'busqueda_avanzada', '0'),
+			('operaciones', 'calendario', '0'),
+			('operaciones', 'carga_csv', '0'),
+			('operaciones', 'carga_pedido', '0'),
+			('operaciones', 'categoria_respaldo', '0'),
+			('operaciones', 'centro', '0'),
+			('operaciones', 'centro_centro', '0'),
+			('operaciones', 'clase_hist', '0'),
+			('operaciones', 'compania', '0'),
+			('operaciones', 'componente', '0'),
+			('operaciones', 'concentracion', '0'),
+			('operaciones', 'contrasena', '0'),
+			('operaciones', 'contrasena', '1'),
+			('operaciones', 'contrasena', '2'),
+			('operaciones', 'contrasena', '3'),
+			('operaciones', 'database', '0'),
+			('operaciones', 'database', '1'),
+			('operaciones', 'database', '2'),
+			('operaciones', 'database', '3'),
+			('operaciones', 'demanda', '0'),
+			('operaciones', 'detener_proceso', '0'),
+			('operaciones', 'detener_proceso', '1'),
+			('operaciones', 'detener_proceso', '2'),
+			('operaciones', 'detener_proceso', '3'),
+			('operaciones', 'documentos_dominio', '0'),
+			('operaciones', 'duracion_proceso', '0'),
+			('operaciones', 'duracion_proceso', '1'),
+			('operaciones', 'duracion_proceso', '2'),
+			('operaciones', 'duracion_proceso', '3'),
+			('operaciones', 'editar_tabla', '0'),
+			('operaciones', 'envio_csv', '0'),
+			('operaciones', 'scanear_codigo', '0'),
+			('operaciones', 'filtro_avanzado', '0'),
+			('operaciones', 'filtro_avanzado_proceso', '0'),
+			('operaciones', 'flete', '0'),
+			('operaciones', 'gen_reporte', '0'),
+			('operaciones', 'grafico_proceso', '0'),
+			('operaciones', 'grupo_planificacion', '0'),
+			('operaciones', 'grupo_distribucion', '0'),
+			('operaciones', 'hint_proceso', '0'),
+			('operaciones', 'incidente', '0'),
+			('operaciones', 'incidente', '1'),
+			('operaciones', 'incidente', '2'),
+			('operaciones', 'incidente', '3'),
+			('operaciones', 'interfaces', '0'),
+			('operaciones', 'interfaces', '1'),
+			('operaciones', 'interfaces', '2'),
+			('operaciones', 'interfaces', '3'),
+			('operaciones', 'leadtime', '0'),
+			('operaciones', 'leadtime', '1'),
+			('operaciones', 'leadtime', '2'),
+			('operaciones', 'leadtime', '3'),
+			('operaciones', 'otro más', '0')
+	]]></SQL>
+
+</UltraDBScript>
