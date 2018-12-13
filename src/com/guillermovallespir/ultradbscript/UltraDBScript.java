@@ -149,7 +149,7 @@ public class UltraDBScript {
                 Map<String,String> data = update.getRepoInfo(installList[i]);
                 out.Write(Out.Type.NORMAL, "", "UPDATE", "Se encontró el paquete `" + data.get("nombre") + "´ versión " + data.get("version_str") + " con id " + installList[i], false);
                 String user_opt = out.inString("¿Estás seguro que quieres instalar este paquete? [S/n]$ ");
-                if(user_opt.matches("[S|s|Y|y]")){
+                if(user_opt.matches("[S|s|Y|y]|([S|s]i)|[Y|y]es")){
                     update.install(data);
                     out.Write(Out.Type.NORMAL, "", "UPDATE", "El paquete `" + data.get("nombre") + " v" + data.get("version_str") + "´ ha sido instalado con éxito", false);
                 }else{

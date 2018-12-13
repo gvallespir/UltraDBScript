@@ -6,6 +6,7 @@
 package com.guillermovallespir.ultradbscript.Structures;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -30,6 +31,8 @@ public class Parameters {
     
     private static List<File> FILE = new ArrayList<>();
     
+    private static List<ParamResult> RESULT = new ArrayList<>();
+    
     
     public void addFile(String id, java.io.File file){
         FILE.add(new File(id, file));
@@ -46,6 +49,38 @@ public class Parameters {
         }
         
         return null;
+    }
+    
+    
+    public void addResultParam(String id, ResultSet rs){
+        RESULT.add(new ParamResult(id, rs));
+    }
+    
+    
+    public ResultSet getResultParam(String id){
+        for(int i = 0; i < RESULT.size(); i++){
+            ParamResult pr = (ParamResult) RESULT.get(i);
+            
+            if(pr.isMe(id))
+                return pr.getValue();
+        }
+        
+        return null;
+    }
+    
+    
+    public boolean removeResultParam(String id){
+        for(int i = 0; i < RESULT.size(); i++){
+            ParamResult pr = (ParamResult) RESULT.get(i);
+            
+            if(pr.isMe(id)){
+                pr.close();
+                RESULT.remove(i);
+                return true;
+            }
+        }
+        
+        return false;
     }
     
     

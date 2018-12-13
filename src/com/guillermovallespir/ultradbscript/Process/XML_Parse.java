@@ -13,6 +13,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import out.Out;
@@ -43,16 +44,27 @@ public class XML_Parse {
         
         if(out != null){
             out.Write(Out.Type.NORMAL, ruta, "XML_FILE", "Se inicia la lectura del archivo XML", false);
-        }else{
-            // Se inicia el parse de actualización
             
-            NodeList node = document.getElementsByTagName("REPOSITORIOS");
-            
-            
+            NodeList node = document.getDocumentElement().getChildNodes();
+            System.out.println("Nodos: " + node.getLength());
             for(int i = 0; i < node.getLength(); i++){
-                Element element = (Element) node.item(i);
+                Node n = (Node) node.item(i);
                 
-                System.out.println(element.getNodeName());
+                if(n.getNodeType() == Node.ELEMENT_NODE){
+                    Element e = (Element) n;
+                    
+                    switch(e.getNodeName().toLowerCase()){
+                        case "include":
+                            new IncludeProcess(file.getAbsolutePath(), e, out);
+                            break;
+                        case "database":
+                            new DataBaseProcess(file.getAbsolutePath(), e, out);
+                            break;
+                        case "sql":
+                            new SQLProcess(file.getAbsolutePath(), e, out);
+                            break;
+                    }
+                }
             }
         }
     }

@@ -78,7 +78,7 @@ public class Out extends OutBase{
         if(terminal_color)
             switch(type){
                 case NORMAL:
-                    System.out.println(text);
+                    System.out.println("[" + tag + "] " + text);
                     break;
                 case E_ERROR:
                     System.out.println(ansi().fg(Ansi.Color.RED).a("[ERROR FATAL] - " + text).reset());

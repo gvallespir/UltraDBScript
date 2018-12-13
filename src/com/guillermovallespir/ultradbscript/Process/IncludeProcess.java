@@ -53,6 +53,7 @@ public class IncludeProcess extends Process{
         
         
         // Se vuelca la información de la instrucción por pantalla
+        this.out.Write(Out.Type.NORMAL, "", TAG, "Se pintan los atributos de la operación", false);
         this.WriteTable();
     }
     
